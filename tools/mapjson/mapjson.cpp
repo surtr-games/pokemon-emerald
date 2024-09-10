@@ -469,11 +469,19 @@ string generate_map_constants_text(string groups_filepath, Json groups_data) {
 
     int group_num = 0;
 
+#if TX_DEBUG_SYSTEM_ENABLE == TRUE
+    vector<int> map_count_vec; //DEBUG
+#endif
+
     for (auto &group : groups_data["group_order"].array_items()) {
         string groupName = json_to_string(group);
         text << "// " << groupName << "\n";
         vector<string> map_ids;
         size_t max_length = 0;
+        
+#if TX_DEBUG_SYSTEM_ENABLE == TRUE
+        int map_count = 0; //DEBUG
+#endif
 
         for (auto &map_name : groups_data[groupName].array_items()) {
             string map_filepath = file_dir + json_to_string(map_name) + sep + "map.json";
@@ -485,6 +493,10 @@ string generate_map_constants_text(string groups_filepath, Json groups_data) {
             map_ids.push_back(id);
             if (id.length() > max_length)
                 max_length = id.length();
+
+#if TX_DEBUG_SYSTEM_ENABLE == TRUE                
+            map_count++; //DEBUG
+#endif
         }
 
         int map_id_num = 0;
@@ -495,9 +507,22 @@ string generate_map_constants_text(string groups_filepath, Json groups_data) {
         text << "\n";
 
         group_num++;
+
+#if TX_DEBUG_SYSTEM_ENABLE == TRUE
+        map_count_vec.push_back(map_count); //DEBUG
+#endif
     }
 
     text << "#define MAP_GROUPS_COUNT " << group_num << "\n\n";
+
+#if TX_DEBUG_SYSTEM_ENABLE == TRUE
+    text << "// static const u8 MAP_GROUP_COUNT[] = {"; //DEBUG
+    for(int i=0; i<group_num; i++){                     //DEBUG
+        text << map_count_vec[i] << ", ";               //DEBUG
+    }                                                   //DEBUG
+    text << "0};\n\n";                                  //DEBUG
+#endif
+
     text << "#endif // GUARD_CONSTANTS_MAP_GROUPS_H\n";
 
     return text.str();

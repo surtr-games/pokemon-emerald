@@ -37,4 +37,8 @@ u16 GetLocalWildMon(bool8 *isWaterMon);
 u16 GetLocalWaterMon(void);
 bool8 UpdateRepelCounter(void);
 
+#if TX_DEBUG_SYSTEM_ENABLE == TRUE
+bool8 StandardWildEncounter_Debug(void);
+#endif
+
 #endif // GUARD_WILD_ENCOUNTER_H

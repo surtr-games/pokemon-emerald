@@ -115,6 +115,10 @@ void TrySetPlayerIconBlink(void);
 void BlendRegionMap(u16 color, u32 coeff);
 void SetRegionMapDataForZoom(void);
 
+#if TX_DEBUG_SYSTEM_ENABLE == TRUE
+u8* GetMapName_HandleVersion(u8*, u16, u8);
+#endif
+
 extern const struct RegionMapLocation gRegionMapEntries[];
 
 #endif //GUARD_REGION_MAP_H
