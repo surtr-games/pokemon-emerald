@@ -942,3 +942,32 @@ u8 ItemId_GetSecondaryId(u16 itemId)
 {
     return gItems[SanitizeItemId(itemId)].secondaryId;
 }
+
+void ItemId_GetHoldEffectParam_Script()
+{
+    VarSet(VAR_RESULT, ItemId_GetHoldEffectParam(VarGet(VAR_0x8004)));
+}
+
+void CycleThroughRepels_Script()
+{
+    // Once the last repel of the chosen type has been depleted, find the next lowest repel class and start using it!
+    // Set it as VAR_REPEL_LAST_USED
+
+    const u16 repelCycle[] = {ITEM_REPEL, ITEM_SUPER_REPEL, ITEM_MAX_REPEL};    
+    u8 i = 0;
+
+    // We still have at least 1 of the last used repel, keep using it
+    if (gSpecialVar_Result == TRUE)
+        return;
+    
+    // Spend the worse repels first
+    for (i = 0; i < 3; ++i)
+    {
+        gSpecialVar_Result = CheckBagHasItem(repelCycle[i], 1);
+        if (gSpecialVar_Result == TRUE)
+        {
+            VarSet(VAR_REPEL_LAST_USED, repelCycle[i]);
+            return;
+        }
+    }
+}
