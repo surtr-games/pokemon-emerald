@@ -410,6 +410,11 @@ static void IntrDummy(void)
 static void WaitForVBlank(void)
 {
     gMain.intrCheck &= ~INTR_FLAG_VBLANK;
+    if(!gWirelessCommType)
+    {
+        VBlankIntrWait();
+        return;
+    }
 
     while (!(gMain.intrCheck & INTR_FLAG_VBLANK))
         ;
