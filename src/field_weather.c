@@ -5,6 +5,7 @@
 #include "util.h"
 #include "event_object_movement.h"
 #include "field_weather.h"
+#include "field_weather_lut.h"
 #include "main.h"
 #include "menu.h"
 #include "palette.h"
@@ -43,7 +44,6 @@ struct WeatherCallbacks
 
 // This file's functions.
 static bool8 LightenSpritePaletteInFog(u8);
-static void BuildColorMaps(void);
 static void UpdateWeatherColorMap(void);
 static void ApplyColorMap(u8 startPalIndex, u8 numPalettes, s8 colorMapIndex);
 static void ApplyColorMapWithBlend(u8 startPalIndex, u8 numPalettes, s8 colorMapIndex, u8 blendCoeff, u16 blendColor);
@@ -157,7 +157,7 @@ void StartWeather(void)
     {
         u8 index = AllocSpritePalette(PALTAG_WEATHER);
         CpuCopy32(gFogPalette, &gPlttBufferUnfaded[OBJ_PLTT_ID(index)], PLTT_SIZE_4BPP);
-        BuildColorMaps();
+        sPaletteColorMapTypes = sBasePaletteColorMapTypes;
         gWeatherPtr->contrastColorMapSpritePalIndex = index;
         gWeatherPtr->weatherPicSpritePalIndex = AllocSpritePalette(PALTAG_WEATHER_2);
         gWeatherPtr->rainSpriteCount = 0;
@@ -260,83 +260,6 @@ static void None_Main(void)
 static u8 None_Finish(void)
 {
     return 0;
-}
-
-// Builds two tables that contain color maps, used for directly transforming
-// palette colors in weather effects. The colors maps are a spectrum of
-// brightness + contrast mappings. By transitioning between the maps, weather
-// effects like lightning are created.
-// It's unclear why the two tables aren't declared as const arrays, since
-// this function always builds the same two tables.
-static void BuildColorMaps(void)
-{
-    u16 i;
-    u8 (*colorMaps)[32];
-    u16 colorVal;
-    u16 curBrightness;
-    u16 brightnessDelta;
-    u16 colorMapIndex;
-    u16 baseBrightness;
-    s16 diff;
-
-    sPaletteColorMapTypes = sBasePaletteColorMapTypes;
-    for (i = 0; i < 2; i++)
-    {
-        if (i == 0)
-            colorMaps = gWeatherPtr->darkenedContrastColorMaps;
-        else
-            colorMaps = gWeatherPtr->contrastColorMaps;
-
-        for (colorVal = 0; colorVal < 32; colorVal++)
-        {
-            curBrightness = colorVal << 8;
-            if (i == 0)
-                brightnessDelta = (colorVal << 8) / 16;
-            else
-                brightnessDelta = 0;
-
-            // First three color mappings are simple brightness modifiers which are
-            // progressively darker, according to brightnessDelta.
-            for (colorMapIndex = 0; colorMapIndex < 3; colorMapIndex++)
-            {
-                curBrightness -= brightnessDelta;
-                colorMaps[colorMapIndex][colorVal] = curBrightness >> 8;
-            }
-
-            baseBrightness = curBrightness;
-            brightnessDelta = (0x1f00 - curBrightness) / (NUM_WEATHER_COLOR_MAPS - 3);
-            if (colorVal < 12)
-            {
-                // For shadows (color values < 12), the remaining color mappings are
-                // brightness modifiers, which are increased at a significantly lower rate
-                // than the midtones and highlights (color values >= 12). This creates a
-                // high contrast effect, used in the thunderstorm weather.
-                for (; colorMapIndex < NUM_WEATHER_COLOR_MAPS; colorMapIndex++)
-                {
-                    curBrightness += brightnessDelta;
-                    diff = curBrightness - baseBrightness;
-                    if (diff > 0)
-                        curBrightness -= diff / 2;
-                    colorMaps[colorMapIndex][colorVal] = curBrightness >> 8;
-                    if (colorMaps[colorMapIndex][colorVal] > 31)
-                        colorMaps[colorMapIndex][colorVal] = 31;
-                }
-            }
-            else
-            {
-                // For midtones and highlights (color values >= 12), the remaining
-                // color mappings are simple brightness modifiers which are
-                // progressively brighter, hitting exactly 31 at the last mapping.
-                for (; colorMapIndex < NUM_WEATHER_COLOR_MAPS; colorMapIndex++)
-                {
-                    curBrightness += brightnessDelta;
-                    colorMaps[colorMapIndex][colorVal] = curBrightness >> 8;
-                    if (colorMaps[colorMapIndex][colorVal] > 31)
-                        colorMaps[colorMapIndex][colorVal] = 31;
-                }
-            }
-        }
-    }
 }
 
 // When the weather is changing, it gradually updates the palettes
@@ -460,8 +383,8 @@ static void ApplyColorMap(u8 startPalIndex, u8 numPalettes, s8 colorMapIndex)
 {
     u16 curPalIndex;
     u16 palOffset;
-    u8 *colorMap;
-    u16 i;
+    const u8 *colorMap;
+    u32 i;
 
     if (colorMapIndex > 0)
     {
@@ -484,9 +407,9 @@ static void ApplyColorMap(u8 startPalIndex, u8 numPalettes, s8 colorMapIndex)
                 u8 r, g, b;
 
                 if (sPaletteColorMapTypes[curPalIndex] == COLOR_MAP_CONTRAST || curPalIndex - 16 == gWeatherPtr->contrastColorMapSpritePalIndex)
-                    colorMap = gWeatherPtr->contrastColorMaps[colorMapIndex];
+                    colorMap = gContrastColorMaps[colorMapIndex];
                 else
-                    colorMap = gWeatherPtr->darkenedContrastColorMaps[colorMapIndex];
+                    colorMap = gDarkenedContrastColorMaps[colorMapIndex];
 
                 for (i = 0; i < 16; i++)
                 {
@@ -541,7 +464,7 @@ static void ApplyColorMapWithBlend(u8 startPalIndex, u8 numPalettes, s8 colorMap
 {
     u16 palOffset;
     u16 curPalIndex;
-    u16 i;
+    u32 i;
     struct RGBColor color = *(struct RGBColor *)&blendColor;
     u8 rBlend = color.r;
     u8 gBlend = color.g;
@@ -562,12 +485,12 @@ static void ApplyColorMapWithBlend(u8 startPalIndex, u8 numPalettes, s8 colorMap
         }
         else
         {
-            u8 *colorMap;
+            const u8 *colorMap;
 
             if (sPaletteColorMapTypes[curPalIndex] == COLOR_MAP_DARK_CONTRAST)
-                colorMap = gWeatherPtr->darkenedContrastColorMaps[colorMapIndex];
+                colorMap = gDarkenedContrastColorMaps[colorMapIndex];
             else
-                colorMap = gWeatherPtr->contrastColorMaps[colorMapIndex];
+                colorMap = gContrastColorMaps[colorMapIndex];
 
             for (i = 0; i < 16; i++)
             {
