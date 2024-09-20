@@ -949,7 +949,7 @@ static const u8 *const sPCNameStrings[] =
     gText_SomeonesPC,
     gText_LanettesPC,
     gText_PlayersPC,
-    gText_LogOff,
+    gText_TurnOff,
 };
 
 static const u8 *const sLilycoveSSTidalDestinations[SSTIDAL_SELECTION_COUNT] =
