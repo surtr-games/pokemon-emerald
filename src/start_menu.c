@@ -353,7 +353,7 @@ static void BuildNormalStartMenu(void)
     {
         AddStartMenuAction(MENU_ACTION_POKENAV);
     }
-
+    
     AddStartMenuAction(MENU_ACTION_PLAYER);
     AddStartMenuAction(MENU_ACTION_SAVE);
     AddStartMenuAction(MENU_ACTION_OPTION);

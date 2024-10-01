@@ -231,11 +231,13 @@ gSpecials::
 	def_special DoLotteryCornerComputerEffect
 	def_special EndLotteryCornerComputerEffect
 	def_special ChooseMonForMoveRelearner
+	def_special ChooseMonForEvTraining
 	def_special MoveDeleterChooseMoveToForget
 	def_special MoveDeleterForgetMove
 	def_special BufferMoveDeleterNicknameAndMove
 	def_special GetNumMovesSelectedMonHas
 	def_special TeachMoveRelearnerMove
+	def_special OpenEvEditorFromScript
 	def_special GetRecordedCyclingRoadResults
 	def_special Special_BeginCyclingRoadChallenge
 	def_special GetPlayerAvatarBike
