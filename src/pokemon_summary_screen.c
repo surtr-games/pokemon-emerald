@@ -773,20 +773,20 @@ static const struct OamData sOamData_CategoryIcons =
     .priority = 0,
 };
 
-static const struct CompressedSpriteSheet gSpriteSheet_CategoryIcons =
+const struct CompressedSpriteSheet gSpriteSheet_CategoryIcons =
 {
     .data = gCategoryIcons_Gfx,
     .size = 16*16*3/2,
     .tag = TAG_CATEGORY_ICONS,
 };
 
-static const struct SpritePalette gSpritePal_CategoryIcons =
+const struct SpritePalette gSpritePal_CategoryIcons =
 {
     .data = gCategoryIcons_Pal,
     .tag = TAG_CATEGORY_ICONS
 };
 
-static const struct SpriteTemplate gSpriteTemplate_CategoryIcons =
+const struct SpriteTemplate gSpriteTemplate_CategoryIcons =
 {
     .tileTag = TAG_CATEGORY_ICONS,
     .paletteTag = TAG_CATEGORY_ICONS,
