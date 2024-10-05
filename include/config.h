@@ -55,6 +55,9 @@
 #endif
 #endif
 
+// Expansion
+#define B_MOVE_DESCRIPTION_BUTTON L_BUTTON
+
 // Debug options
 #define TX_DEBUG_SYSTEM_ENABLE         TRUE               // Enables a overworld debug menu for changing flags, variables, giving pokemon and more, accessed by holding R and pressing START while in the overworld by default.
 #define TX_DEBUG_SYSTEM_HELD_KEYS      (R_BUTTON)         // The keys required to be held to open the debug menu.

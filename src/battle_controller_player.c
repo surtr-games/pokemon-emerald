@@ -28,6 +28,8 @@
 #include "text.h"
 #include "util.h"
 #include "window.h"
+#include "menu.h"
+#include "pokemon_summary_screen.h"
 #include "constants/battle_anim.h"
 #include "constants/items.h"
 #include "constants/moves.h"
@@ -119,6 +121,8 @@ static void DoSwitchOutAnimation(void);
 static void PlayerDoMoveAnimation(void);
 static void Task_StartSendOutAnim(u8);
 static void EndDrawPartyStatusSummary(void);
+static void MoveSelectionDisplayMoveDescription(void);
+static void MoveSelectionHideMoveDescription(void);
 
 static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(void) =
 {
@@ -482,6 +486,11 @@ static void HandleInputChooseMove(void)
     {
         u8 moveTarget;
 
+        if (gBattleStruct->descriptionSubmenu)
+        {
+            MoveSelectionHideMoveDescription();
+        }
+
         PlaySE(SE_SELECT);
         if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_CURSE)
         {
@@ -540,8 +549,14 @@ static void HandleInputChooseMove(void)
             gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCB_ShowAsMoveTarget;
         }
     }
-    else if (JOY_NEW(B_BUTTON) || gPlayerDpadHoldFrames > 59)
+    else if ((JOY_NEW(B_BUTTON) || gPlayerDpadHoldFrames > 59))
     {
+        if (gBattleStruct->descriptionSubmenu)
+        {
+            MoveSelectionHideMoveDescription();
+            return;
+        }
+
         PlaySE(SE_SELECT);
         BtlController_EmitTwoReturnValues(BUFFER_B, 10, 0xFFFF);
         PlayerBufferExecCompleted();
@@ -556,6 +571,9 @@ static void HandleInputChooseMove(void)
             MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
             MoveSelectionDisplayPpNumber();
             MoveSelectionDisplayMoveType();
+
+            if (gBattleStruct->descriptionSubmenu)
+                MoveSelectionDisplayMoveDescription();
         }
     }
     else if (JOY_NEW(DPAD_RIGHT))
@@ -569,6 +587,9 @@ static void HandleInputChooseMove(void)
             MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
             MoveSelectionDisplayPpNumber();
             MoveSelectionDisplayMoveType();
+
+            if (gBattleStruct->descriptionSubmenu)
+                MoveSelectionDisplayMoveDescription();
         }
     }
     else if (JOY_NEW(DPAD_UP))
@@ -581,6 +602,9 @@ static void HandleInputChooseMove(void)
             MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
             MoveSelectionDisplayPpNumber();
             MoveSelectionDisplayMoveType();
+
+            if (gBattleStruct->descriptionSubmenu)
+                MoveSelectionDisplayMoveDescription();
         }
     }
     else if (JOY_NEW(DPAD_DOWN))
@@ -594,9 +618,12 @@ static void HandleInputChooseMove(void)
             MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
             MoveSelectionDisplayPpNumber();
             MoveSelectionDisplayMoveType();
+
+            if (gBattleStruct->descriptionSubmenu)
+                MoveSelectionDisplayMoveDescription();
         }
     }
-    else if (JOY_NEW(SELECT_BUTTON))
+    else if (JOY_NEW(SELECT_BUTTON) && !gBattleStruct->descriptionSubmenu)
     {
         if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
         {
@@ -610,6 +637,18 @@ static void HandleInputChooseMove(void)
             MoveSelectionCreateCursorAt(gMultiUsePlayerCursor, 27);
             BattlePutTextOnWindow(gText_BattleSwitchWhich, B_WIN_SWITCH_PROMPT);
             gBattlerControllerFuncs[gActiveBattler] = HandleMoveSwitching;
+        }
+    }
+    else if (JOY_NEW(B_MOVE_DESCRIPTION_BUTTON))
+    {
+        if (gBattleStruct->descriptionSubmenu)
+        {
+            MoveSelectionHideMoveDescription();
+        }
+        else
+        {
+            gBattleStruct->descriptionSubmenu = TRUE;
+            MoveSelectionDisplayMoveDescription();
         }
     }
 }
@@ -3144,4 +3183,65 @@ static void PlayerHandleEndLinkBattle(void)
 
 static void PlayerCmdEnd(void)
 {
+}
+
+static void MoveSelectionDisplayMoveDescription(void)
+{
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+    u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
+    u16 pwr = gBattleMoves[move].power;
+    u16 acc = gBattleMoves[move].accuracy;
+    u8 cat = gBattleMoves[move].category;
+
+    u8 pwr_num[3], acc_num[3];
+    u8 cat_desc[7] = _("CAT: ");
+    u8 pwr_desc[7] = _("PWR: ");
+    u8 acc_desc[7] = _("ACC: ");
+    u8 cat_start[] = _("{CLEAR_TO 0x00}");
+    u8 pwr_start[] = _("{CLEAR_TO 0x38}");
+    u8 acc_start[] = _("{CLEAR_TO 0x6D}");
+    LoadMessageBoxAndBorderGfx();
+    DrawStdWindowFrame(B_WIN_MOVE_DESCRIPTION, FALSE);
+    if (pwr < 2)
+        StringCopy(pwr_num, gText_BattleSwitchWhich5);
+    else
+        ConvertIntToDecimalStringN(pwr_num, pwr, STR_CONV_MODE_LEFT_ALIGN, 3);
+    if (acc < 2)
+        StringCopy(acc_num, gText_BattleSwitchWhich5);
+    else
+        ConvertIntToDecimalStringN(acc_num, acc, STR_CONV_MODE_LEFT_ALIGN, 3);
+    StringCopy(gDisplayedStringBattle, cat_start);
+    StringAppend(gDisplayedStringBattle, cat_desc);
+    StringAppend(gDisplayedStringBattle, pwr_start);
+    StringAppend(gDisplayedStringBattle, pwr_desc);
+    StringAppend(gDisplayedStringBattle, pwr_num);
+    StringAppend(gDisplayedStringBattle, acc_start);
+    StringAppend(gDisplayedStringBattle, acc_desc);
+    StringAppend(gDisplayedStringBattle, acc_num);
+    StringAppend(gDisplayedStringBattle, gText_NewLine);
+    StringAppend(gDisplayedStringBattle, gMoveDescriptionPointers[move - 1]);
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_DESCRIPTION);
+
+    if (gCategoryIconSpriteId == 0xFF)
+        gCategoryIconSpriteId = CreateSprite(&gSpriteTemplate_CategoryIcons, 35, 64, 1);
+
+    StartSpriteAnim(&gSprites[gCategoryIconSpriteId], cat);
+
+    CopyWindowToVram(B_WIN_MOVE_DESCRIPTION, COPYWIN_FULL);
+}
+
+static void MoveSelectionHideMoveDescription(void)
+{
+    gBattleStruct->descriptionSubmenu = FALSE;
+    if (gCategoryIconSpriteId != 0xFF)
+    {
+        DestroySprite(&gSprites[gCategoryIconSpriteId]);
+        gCategoryIconSpriteId = 0xFF;
+    }
+
+    FillWindowPixelBuffer(B_WIN_MOVE_DESCRIPTION, PIXEL_FILL(0));
+    ClearStdWindowAndFrame(B_WIN_MOVE_DESCRIPTION, FALSE);
+    CopyWindowToVram(B_WIN_MOVE_DESCRIPTION, COPYWIN_GFX);
+    MoveSelectionDisplayPpNumber();
+    MoveSelectionDisplayMoveType();
 }
