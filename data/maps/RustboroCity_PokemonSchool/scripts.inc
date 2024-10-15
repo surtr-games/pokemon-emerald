@@ -313,7 +313,7 @@ RustboroCity_PokemonSchool_Text_ScottMetAlreadyCut:
 	.string "So, what brings you to this SCHOOL?\n"
 	.string "Are you a TRAINER, too?\p"
 	.string "The first thing you should do is to\n"
-	.string "have a POKéMON learn the move CUT.\p"
+	.string "have a POKéMON that can use CUT.\p"
 	.string "If I remember correctly, someone in\n"
 	.string "this town has CUT.$"
 

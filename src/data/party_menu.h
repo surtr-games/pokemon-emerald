@@ -625,6 +625,7 @@ static const u8 *const sActionStringTable[] =
     [PARTY_MSG_DO_WHAT_WITH_MAIL]      = gText_DoWhatWithMail,
     [PARTY_MSG_ALREADY_HOLDING_ONE]    = gText_AlreadyHoldingOne,
     [PARTY_MSG_MOVE_ITEM_WHERE]        = gText_MoveItemWhere,
+    [PARTY_MSG_USE_WHICH_FIELD_MOVE]   = gText_UseWhichFieldMove,
 };
 
 static const u8 *const sDescriptionStringTable[] =
@@ -692,6 +693,7 @@ struct
     [MENU_FIELD_MOVES + FIELD_MOVE_MILK_DRINK] = {gMoveNames[MOVE_MILK_DRINK], CursorCb_FieldMove},
     [MENU_FIELD_MOVES + FIELD_MOVE_SOFT_BOILED] = {gMoveNames[MOVE_SOFT_BOILED], CursorCb_FieldMove},
     [MENU_FIELD_MOVES + FIELD_MOVE_SWEET_SCENT] = {gMoveNames[MOVE_SWEET_SCENT], CursorCb_FieldMove},
+    [MENU_FIELD_MOVES_SUBMENU] = {gText_FieldMovesSubMenu, CursorCb_FieldMovesSubMenu},
 };
 
 static const u8 sPartyMenuAction_SummarySwitchCancel[] = {MENU_SUMMARY, MENU_SWITCH, MENU_CANCEL1};
@@ -763,6 +765,18 @@ static const u16 sFieldMoves[FIELD_MOVES_COUNT + 1] =
     // NOTE: This value is used as the terminal value for the table. There's no reason to do this, as the size of the table is known.
     //       Whichever move shares this value (MOVE_SWORDS_DANCE by default) if present will be treated as the end of the array rather than a field move.
     [FIELD_MOVES_COUNT]       = FIELD_MOVES_COUNT
+};
+
+static const u16 sFieldMovesToItemId[8] =
+{
+    [FIELD_MOVE_CUT]          = ITEM_HM01,
+    [FIELD_MOVE_FLY]          = ITEM_HM02,
+    [FIELD_MOVE_SURF]         = ITEM_HM03,
+    [FIELD_MOVE_STRENGTH]     = ITEM_HM04,
+    [FIELD_MOVE_FLASH]        = ITEM_HM05,
+    [FIELD_MOVE_ROCK_SMASH]   = ITEM_HM06,
+    [FIELD_MOVE_WATERFALL]    = ITEM_HM07,
+    [FIELD_MOVE_DIVE]         = ITEM_HM08
 };
 
 struct
@@ -1133,3 +1147,26 @@ static const u16 sTMHMMoves[] =
     FOREACH_TMHM(TMHM_MOVE)
 };
 #undef TMHM_MOVE
+
+static void PartyMenuAction_PrintCallback(u8 windowId, u32 actionIndex, u8 y);
+static const struct ListMenuTemplate sPartyMenuActionListTemplate =
+{
+    .items = NULL,
+    .moveCursorFunc = NULL,
+    .itemPrintFunc = PartyMenuAction_PrintCallback,
+    .totalItems = 0,
+    .maxShowed = 0,
+    .windowId = 0,
+    .header_X = 0,
+    .item_X = 8,
+    .cursor_X = 0,
+    .upText_Y = 1,
+    .cursorPal = 2,
+    .fillValue = 1,
+    .cursorShadowPal = 3,
+    .lettersSpacing = 0,
+    .itemVerticalPadding = 0,
+    .scrollMultiple = LIST_NO_MULTIPLE_SCROLL,
+    .fontId = FONT_NORMAL,
+    .cursorKind = CURSOR_BLACK_ARROW
+};

@@ -38,9 +38,9 @@ RustboroCity_CuttersHouse_Text_ExplainCut:
 	.string "short, is CUT.\p"
 	.string "An HM move is one that can be used\n"
 	.string "by POKéMON outside of battle.\p"
-	.string "Any POKéMON that's learned CUT can\n"
-	.string "chop down thin trees if the TRAINER\l"
-	.string "has earned the STONE BADGE.\p"
+	.string "Some POKéMON can use CUT to chop down\n"
+	.string "thin trees if the TRAINER has earned\l"
+	.string "the STONE BADGE.\p"
 	.string "And, like a TM, an HM can be used\n"
 	.string "more than once.$"
 

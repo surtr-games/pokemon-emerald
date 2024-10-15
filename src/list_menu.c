@@ -87,6 +87,7 @@ static void ListMenuUpdateCursorObject(u8 taskId, u16 x, u16 y, u32 cursorObjId)
 static void ListMenuRemoveCursorObject(u8 taskId, u32 cursorObjId);
 static void SpriteCallback_ScrollIndicatorArrow(struct Sprite *sprite);
 static void SpriteCallback_RedArrowCursor(struct Sprite *sprite);
+static void ListMenuResetOverride(struct ListMenu *list);
 
 // EWRAM vars
 static EWRAM_DATA struct {
@@ -100,11 +101,10 @@ EWRAM_DATA struct ScrollArrowsTemplate gTempScrollArrowTemplate = {0};
 
 // IWRAM common
 struct {
-    u8 cursorPal:4;
     u8 fillValue:4;
+    u8 cursorPal:4;
     u8 cursorShadowPal:4;
     u8 lettersSpacing:6;
-    u8 field_2_2:6; // unused
     u8 fontId:7;
     bool8 enabled:1;
 } gListMenuOverride;
@@ -578,12 +578,7 @@ static u8 ListMenuInitInternal(struct ListMenuTemplate *listMenuTemplate, u16 sc
     list->taskId = TASK_NONE;
     list->unk_1F = 0;
 
-    gListMenuOverride.cursorPal = list->template.cursorPal;
-    gListMenuOverride.fillValue = list->template.fillValue;
-    gListMenuOverride.cursorShadowPal = list->template.cursorShadowPal;
-    gListMenuOverride.lettersSpacing = list->template.lettersSpacing;
-    gListMenuOverride.fontId = list->template.fontId;
-    gListMenuOverride.enabled = FALSE;
+    ListMenuResetOverride(list);
 
     if (list->template.totalItems < list->template.maxShowed)
         list->template.maxShowed = list->template.totalItems;
@@ -599,29 +594,32 @@ static u8 ListMenuInitInternal(struct ListMenuTemplate *listMenuTemplate, u16 sc
 static void ListMenuPrint(struct ListMenu *list, const u8 *str, u8 x, u8 y)
 {
     u8 colors[3];
+
     if (gListMenuOverride.enabled)
     {
+        gListMenuOverride.enabled = FALSE;
+
         colors[0] = gListMenuOverride.fillValue;
         colors[1] = gListMenuOverride.cursorPal;
         colors[2] = gListMenuOverride.cursorShadowPal;
-        AddTextPrinterParameterized4(list->template.windowId,
-                                     gListMenuOverride.fontId,
-                                     x, y,
-                                     gListMenuOverride.lettersSpacing,
-                                     0, colors, TEXT_SKIP_DRAW, str);
 
-        gListMenuOverride.enabled = FALSE;
+        AddTextPrinterParameterized4(list->template.windowId,
+            gListMenuOverride.fontId,
+            x, y,
+            gListMenuOverride.lettersSpacing,
+            0, colors, TEXT_SKIP_DRAW, str);
     }
     else
     {
         colors[0] = list->template.fillValue;
         colors[1] = list->template.cursorPal;
         colors[2] = list->template.cursorShadowPal;
+    
         AddTextPrinterParameterized4(list->template.windowId,
-                                     list->template.fontId,
-                                     x, y,
-                                     list->template.lettersSpacing,
-                                     0, colors, TEXT_SKIP_DRAW, str);
+            list->template.fontId,
+            x, y,
+            list->template.lettersSpacing,
+            0, colors, TEXT_SKIP_DRAW, str);
     }
 }
 
@@ -890,12 +888,25 @@ static void ListMenuCallSelectionChangedCallback(struct ListMenu *list, u8 onIni
         list->template.moveCursorFunc(list->template.items[list->scrollOffset + list->selectedRow].id, onInit, list);
 }
 
-// unused
-void ListMenuOverrideSetColors(u8 cursorPal, u8 fillValue, u8 cursorShadowPal)
+void ListMenuSetOverrideColors(u8 fillValue, u8 cursorPal, u8 cursorShadowPal)
 {
-    gListMenuOverride.cursorPal = cursorPal;
     gListMenuOverride.fillValue = fillValue;
+    gListMenuOverride.cursorPal = cursorPal;
     gListMenuOverride.cursorShadowPal = cursorShadowPal;
+}
+
+static void ListMenuResetOverride(struct ListMenu *list)
+{
+    gListMenuOverride.fillValue = list->template.fillValue;
+    gListMenuOverride.cursorPal = list->template.cursorPal;
+    gListMenuOverride.cursorShadowPal = list->template.cursorShadowPal;
+    gListMenuOverride.lettersSpacing = list->template.lettersSpacing;
+    gListMenuOverride.fontId = list->template.fontId;
+    gListMenuOverride.enabled = FALSE;
+}
+
+void ListMenuEnableOverride()
+{
     gListMenuOverride.enabled = TRUE;
 }
 

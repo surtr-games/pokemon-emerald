@@ -94,7 +94,8 @@ enum {
     MENU_TRADE1,
     MENU_TRADE2,
     MENU_TOSS,
-    MENU_FIELD_MOVES
+    MENU_FIELD_MOVES_SUBMENU,
+    MENU_FIELD_MOVES,
 };
 
 // IDs for the action lists that appear when a party mon is selected
@@ -113,6 +114,7 @@ enum {
     ACTIONS_TRADE,
     ACTIONS_SPIN_TRADE,
     ACTIONS_TAKEITEM_TOSS,
+    ACTIONS_FIELD_MOVES,
 };
 
 // In CursorCb_FieldMove, field moves <= FIELD_MOVE_WATERFALL are assumed to line up with the badge flags.
@@ -184,6 +186,16 @@ struct PartyMenuBoxInfoRects
     u8 descTextHeight;
 };
 
+#define PARTY_MENU_SELECTION_MENU_MAX_ITEMS 16
+struct PartyMenuSelectionMenu
+{
+    struct ListMenuItem menuItems[PARTY_MENU_SELECTION_MENU_MAX_ITEMS];
+    u16 listOffset;
+    u16 listRow;
+    u8 maxShowed;
+    u8 menuTask;
+};
+
 struct PartyMenuInternal
 {
     TaskFunc task;
@@ -194,7 +206,7 @@ struct PartyMenuInternal
     u32 spriteIdCancelPokeball:7;
     u32 messageId:14;
     u8 windowId[3];
-    u8 actions[8];
+    u8 actions[PARTY_MENU_SELECTION_MENU_MAX_ITEMS];
     u8 numActions;
     // In vanilla Emerald, only the first 0xB0 hwords (0x160 bytes) are actually used.
     // However, a full 0x100 hwords (0x200 bytes) are allocated.
@@ -202,6 +214,7 @@ struct PartyMenuInternal
     // bin2c, the utility used to encode the compressed palette data.
     u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)];
     s16 data[16];
+    struct PartyMenuSelectionMenu selectionMenuData;
 };
 
 struct PartyMenuBox
@@ -335,7 +348,8 @@ static void Task_HandleCancelParticipationYesNoInput(u8);
 static bool8 CanLearnTutorMove(u16, u8);
 static u16 GetTutorMove(u8);
 static bool8 ShouldUseChooseMonText(void);
-static void SetPartyMonFieldSelectionActions(struct Pokemon *, u8);
+static void SetPartyMenuMainActions(struct Pokemon *, u8);
+static void SetFieldMoveActions(struct Pokemon *, u8);
 static u8 GetPartyMenuActionsTypeInBattle(struct Pokemon *);
 static u8 GetPartySlotEntryStatus(s8);
 static void Task_UpdateHeldItemSprite(u8);
@@ -464,6 +478,7 @@ static void BlitBitmapToPartyWindow_RightColumn(u8, u8, u8, u8, u8, bool8);
 static void CursorCb_Summary(u8);
 static void CursorCb_Switch(u8);
 static void CursorCb_Cancel1(u8);
+static void CursorCb_FieldMovesSubMenu(u8 taskId);
 static void CursorCb_Item(u8);
 static void CursorCb_Give(u8);
 static void CursorCb_TakeItem(u8);
@@ -2483,6 +2498,7 @@ void DisplayPartyMenuStdMessage(u32 stringId)
         switch (stringId)
         {
         case PARTY_MSG_DO_WHAT_WITH_MON:
+        case PARTY_MSG_USE_WHICH_FIELD_MOVE:
             *windowPtr = AddWindow(&sDoWhatWithMonMsgWindowTemplate);
             break;
         case PARTY_MSG_DO_WHAT_WITH_ITEM:
@@ -2536,17 +2552,41 @@ static bool8 ShouldUseChooseMonText(void)
     return FALSE;
 }
 
+static void InitActionListMenuItems()
+{
+    u8 i;
+
+    for (i = 0; i < sPartyMenuInternal->numActions; i++)
+    {
+        sPartyMenuInternal->selectionMenuData.menuItems[i].name = sCursorOptions[sPartyMenuInternal->actions[i]].text;
+        sPartyMenuInternal->selectionMenuData.menuItems[i].id = i;
+    }
+
+    sPartyMenuInternal->selectionMenuData.listOffset = 0;
+    sPartyMenuInternal->selectionMenuData.listRow = 0;    
+
+    gMultiuseListMenuTemplate = sPartyMenuActionListTemplate;
+    gMultiuseListMenuTemplate.totalItems = sPartyMenuInternal->numActions;
+    gMultiuseListMenuTemplate.items = sPartyMenuInternal->selectionMenuData.menuItems;
+    gMultiuseListMenuTemplate.windowId = sPartyMenuInternal->windowId[0];
+    gMultiuseListMenuTemplate.maxShowed = sPartyMenuInternal->selectionMenuData.maxShowed;
+
+    sPartyMenuInternal->selectionMenuData.menuTask = ListMenuInit(&gMultiuseListMenuTemplate, sPartyMenuInternal->selectionMenuData.listOffset, sPartyMenuInternal->selectionMenuData.listRow);
+}
+
 static u8 DisplaySelectionWindow(u8 windowType)
 {
     struct WindowTemplate window;
     u8 cursorDimension;
     u8 letterSpacing;
     u8 i;
+    u8 maxShowed = sPartyMenuInternal->selectionMenuData.maxShowed = min(sPartyMenuInternal->numActions, 8);
 
     switch (windowType)
     {
     case SELECTWINDOW_ACTIONS:
-        SetWindowTemplateFields(&window, 2, 19, 19 - (sPartyMenuInternal->numActions * 2), 10, sPartyMenuInternal->numActions * 2, 14, 0x2E9);
+    case SELECTWINDOW_FIELD_MOVES:
+        SetWindowTemplateFields(&window, 2, 19, 19 - (maxShowed * 2), 10, maxShowed * 2, 14, 0x2E9);
         break;
     case SELECTWINDOW_ITEM:
         window = sItemGiveTakeWindowTemplate;
@@ -2563,19 +2603,21 @@ static u8 DisplaySelectionWindow(u8 windowType)
     DrawStdFrameWithCustomTileAndPalette(sPartyMenuInternal->windowId[0], FALSE, 0x4F, 13);
     if (windowType == SELECTWINDOW_MOVES)
         return sPartyMenuInternal->windowId[0];
-    cursorDimension = GetMenuCursorDimensionByFont(FONT_NORMAL, 0);
-    letterSpacing = GetFontAttribute(FONT_NORMAL, FONTATTR_LETTER_SPACING);
 
-    for (i = 0; i < sPartyMenuInternal->numActions; i++)
-    {
-        u8 fontColorsId = (sPartyMenuInternal->actions[i] >= MENU_FIELD_MOVES) ? 4 : 3;
-        AddTextPrinterParameterized4(sPartyMenuInternal->windowId[0], FONT_NORMAL, cursorDimension, (i * 16) + 1, letterSpacing, 0, sFontColorTable[fontColorsId], 0, sCursorOptions[sPartyMenuInternal->actions[i]].text);
-    }
+    InitActionListMenuItems();
 
-    InitMenuInUpperLeftCorner(sPartyMenuInternal->windowId[0], sPartyMenuInternal->numActions, 0, TRUE);
     ScheduleBgCopyTilemapToVram(2);
 
     return sPartyMenuInternal->windowId[0];
+}
+
+static void PartyMenuAction_PrintCallback(u8 windowId, u32 actionIndex, u8 y)
+{
+    if (sPartyMenuInternal->actions[actionIndex] >= MENU_FIELD_MOVES)
+    {
+        ListMenuSetOverrideColors(sFontColorTable[4][0], sFontColorTable[4][1], sFontColorTable[4][2]);
+        ListMenuEnableOverride();
+    }
 }
 
 static void PrintMessage(const u8 *text)
@@ -2609,7 +2651,11 @@ static void SetPartyMonSelectionActions(struct Pokemon *mons, u8 slotId, u8 acti
 
     if (action == ACTIONS_NONE)
     {
-        SetPartyMonFieldSelectionActions(mons, slotId);
+        SetPartyMenuMainActions(mons, slotId);
+    }
+    else if (action == ACTIONS_FIELD_MOVES)
+    {
+        SetFieldMoveActions(mons, slotId);
     }
     else
     {
@@ -2619,25 +2665,11 @@ static void SetPartyMonSelectionActions(struct Pokemon *mons, u8 slotId, u8 acti
     }
 }
 
-static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
+static void SetPartyMenuMainActions(struct Pokemon *mons, u8 slotId)
 {
-    u8 i, j;
-
     sPartyMenuInternal->numActions = 0;
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
-
-    // Add field moves to action list
-    for (i = 0; i < MAX_MON_MOVES; i++)
-    {
-        for (j = 0; sFieldMoves[j] != FIELD_MOVES_COUNT; j++)
-        {
-            if (GetMonData(&mons[slotId], i + MON_DATA_MOVE1) == sFieldMoves[j])
-            {
-                AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
-                break;
-            }
-        }
-    }
+    AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES_SUBMENU);
 
     if (!InBattlePike())
     {
@@ -2651,6 +2683,38 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANCEL1);
 }
 
+static void SetFieldMoveActions(struct Pokemon *mons, u8 slotId)
+{
+    u8 i, j;
+
+    sPartyMenuInternal->numActions = 0;
+    for (i = 0; sFieldMoves[i] != FIELD_MOVES_COUNT; i++)
+    {
+        // For HMs, allow using the moves even if the Pokémon doesn't know it
+        // But enforce that the HM has been obtained and that the Pokémon could learn it
+        if (i <= FIELD_MOVE_WATERFALL)
+        {
+            if (CheckBagHasItem(sFieldMovesToItemId[i], 1) && CanMonLearnTMHM(&mons[slotId], sFieldMovesToItemId[i] - ITEM_TM01))
+            {
+                AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, i + MENU_FIELD_MOVES);
+            }
+        }
+        else // Enforce the Pokémon knowing the move
+        {
+            for (j = 0; j < MAX_MON_MOVES; j++)
+            {
+                if (GetMonData(&mons[slotId], j + MON_DATA_MOVE1) == sFieldMoves[i])
+                {
+                    AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, i + MENU_FIELD_MOVES);
+                    break;
+                }
+            }
+        }    
+    }
+
+    AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANCEL2);
+}
+
 static u8 GetPartyMenuActionsType(struct Pokemon *mon)
 {
     u32 actionType;
@@ -2661,7 +2725,7 @@ static u8 GetPartyMenuActionsType(struct Pokemon *mon)
         if (InMultiPartnerRoom() == TRUE || GetMonData(mon, MON_DATA_IS_EGG))
             actionType = ACTIONS_SWITCH;
         else
-            actionType = ACTIONS_NONE; // actions populated by SetPartyMonFieldSelectionActions
+            actionType = ACTIONS_NONE; // actions populated by SetPartyMenuMainActions
         break;
     case PARTY_MENU_TYPE_IN_BATTLE:
         actionType = GetPartyMenuActionsTypeInBattle(mon);
@@ -2757,23 +2821,23 @@ static void Task_HandleSelectionMenuInput(u8 taskId)
 {
     if (!gPaletteFade.active && MenuHelpers_ShouldWaitForLinkRecv() != TRUE)
     {
-        s8 input;
+        s32 input;
         s16 *data = gTasks[taskId].data;
 
-        if (sPartyMenuInternal->numActions <= 3)
-            input = Menu_ProcessInputNoWrapAround_other();
-        else
-            input = ProcessMenuInput_other();
+        input = ListMenu_ProcessInput(sPartyMenuInternal->selectionMenuData.menuTask);
+        ListMenuGetScrollAndRow(sPartyMenuInternal->selectionMenuData.menuTask, &sPartyMenuInternal->selectionMenuData.listOffset, &sPartyMenuInternal->selectionMenuData.listRow);
 
-        data[0] = Menu_GetCursorPos();
+        data[0] = sPartyMenuInternal->selectionMenuData.listOffset + sPartyMenuInternal->selectionMenuData.listRow;
+        
         switch (input)
         {
-        case MENU_NOTHING_CHOSEN:
+        case LIST_NOTHING_CHOSEN:
             break;
-        case MENU_B_PRESSED:
+        case LIST_CANCEL:
             PlaySE(SE_SELECT);
             PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[2]);
             sCursorOptions[sPartyMenuInternal->actions[sPartyMenuInternal->numActions - 1]].func(taskId);
+            DestroyListMenuTask(sPartyMenuInternal->selectionMenuData.menuTask, &sPartyMenuInternal->selectionMenuData.listOffset, &sPartyMenuInternal->selectionMenuData.listRow);
             break;
         default:
             PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[2]);
@@ -3085,6 +3149,18 @@ static void CursorCb_Cancel1(u8 taskId)
     else
         DisplayPartyMenuStdMessage(PARTY_MSG_CHOOSE_MON);
     gTasks[taskId].func = Task_HandleChooseMonInput;
+}
+
+static void CursorCb_FieldMovesSubMenu(u8 taskId)
+{
+    PlaySE(SE_SELECT);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
+    SetPartyMonSelectionActions(gPlayerParty, gPartyMenu.slotId, ACTIONS_FIELD_MOVES);
+    DisplaySelectionWindow(SELECTWINDOW_FIELD_MOVES);
+    DisplayPartyMenuStdMessage(PARTY_MSG_USE_WHICH_FIELD_MOVE);
+    gTasks[taskId].data[0] = 0xFF;
+    gTasks[taskId].func = Task_HandleSelectionMenuInput;
 }
 
 static void CursorCb_Item(u8 taskId)
@@ -3717,7 +3793,8 @@ static void Task_HandleSpinTradeYesNoInput(u8 taskId)
 
 static void CursorCb_FieldMove(u8 taskId)
 {
-    u8 fieldMove = sPartyMenuInternal->actions[Menu_GetCursorPos()] - MENU_FIELD_MOVES;
+    u8 cursorPos = sPartyMenuInternal->selectionMenuData.listOffset + sPartyMenuInternal->selectionMenuData.listRow;
+    u8 fieldMove = sPartyMenuInternal->actions[cursorPos] - MENU_FIELD_MOVES;
     const struct MapHeader *mapHeader;
 
     PlaySE(SE_SELECT);
@@ -3873,7 +3950,7 @@ static void FieldCallback_Surf(void)
 
 static bool8 SetUpFieldMove_Surf(void)
 {
-    if (PartyHasMonWithSurf() == TRUE && IsPlayerFacingSurfableFishableWater() == TRUE)
+    if (IsPlayerFacingSurfableFishableWater() == TRUE)
     {
         gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
         gPostMenuFieldCallback = FieldCallback_Surf;
