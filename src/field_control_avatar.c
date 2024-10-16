@@ -41,7 +41,7 @@ static EWRAM_DATA u16 sPrevMetatileBehavior = 0;
 static EWRAM_DATA u8 sCurrentDirection = DIR_NONE;
 static EWRAM_DATA u8 sPreviousDirection = DIR_NONE;
 
-u8 gSelectedObjectEvent;
+COMMON_DATA u8 gSelectedObjectEvent = 0;
 
 static void GetPlayerPosition(struct MapPosition *);
 static void GetInFrontOfPlayerPosition(struct MapPosition *);
