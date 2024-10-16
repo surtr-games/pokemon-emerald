@@ -2836,11 +2836,12 @@ static void Task_HandleSelectionMenuInput(u8 taskId)
         case LIST_CANCEL:
             PlaySE(SE_SELECT);
             PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[2]);
-            sCursorOptions[sPartyMenuInternal->actions[sPartyMenuInternal->numActions - 1]].func(taskId);
             DestroyListMenuTask(sPartyMenuInternal->selectionMenuData.menuTask, &sPartyMenuInternal->selectionMenuData.listOffset, &sPartyMenuInternal->selectionMenuData.listRow);
+            sCursorOptions[sPartyMenuInternal->actions[sPartyMenuInternal->numActions - 1]].func(taskId);
             break;
         default:
             PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[2]);
+            DestroyListMenuTask(sPartyMenuInternal->selectionMenuData.menuTask, &sPartyMenuInternal->selectionMenuData.listOffset, &sPartyMenuInternal->selectionMenuData.listRow);
             sCursorOptions[sPartyMenuInternal->actions[input]].func(taskId);
             break;
         }
