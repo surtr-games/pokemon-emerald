@@ -19,6 +19,12 @@ LilycoveCity_DepartmentStore_3F_Pokemart_Vitamins:
 	.2byte ITEM_ZINC
 	.2byte ITEM_CARBOS
 	.2byte ITEM_HP_UP
+	.2byte ITEM_MUTAGEN_HP
+	.2byte ITEM_MUTAGEN_ATK
+	.2byte ITEM_MUTAGEN_DEF
+	.2byte ITEM_MUTAGEN_SPEED
+	.2byte ITEM_MUTAGEN_SPDEF
+	.2byte ITEM_MUTAGEN_SPATK
 	.2byte ITEM_NONE
 	release
 	end

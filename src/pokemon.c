@@ -2080,10 +2080,14 @@ static const u8 sGetMonDataEVConstants[] =
     MON_DATA_SPATK_EV
 };
 
-// For stat-raising items
-static const u8 sStatsToRaise[] =
+static const u8 sGetMonDataIVConstants[] =
 {
-    STAT_ATK, STAT_ATK, STAT_SPEED, STAT_DEF, STAT_SPATK, STAT_ACC
+    MON_DATA_HP_IV,
+    MON_DATA_ATK_IV,
+    MON_DATA_DEF_IV,
+    MON_DATA_SPEED_IV,
+    MON_DATA_SPDEF_IV,
+    MON_DATA_SPATK_IV
 };
 
 // 3 modifiers each for how much to change friendship for different ranges
@@ -4711,6 +4715,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
     u8 effectFlags;
     s8 evChange;
     u16 evCount;
+    s8 ivChange;
 
     // Get item hold effect
     heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
@@ -4773,7 +4778,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
         switch (i)
         {
 
-        // Handle ITEM0 effects (infatuation, Dire Hit, X Attack). ITEM0_SACRED_ASH is handled in party_menu.c
+        // Handle ITEM0 effects (infatuation, Dire Hit). ITEM0_SACRED_ASH is handled in party_menu.c
         case 0:
             // Cure infatuation
             if ((itemEffect[i] & ITEM0_INFATUATION)
@@ -4791,24 +4796,25 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
                 retVal = FALSE;
             }
 
-            // X Attack
-            if ((itemEffect[i] & ITEM0_X_ATTACK)
-             && gBattleMons[gActiveBattler].statStages[STAT_ATK] < MAX_STAT_STAGE)
-            {
-                gBattleMons[gActiveBattler].statStages[STAT_ATK] += itemEffect[i] & ITEM0_X_ATTACK;
-                if (gBattleMons[gActiveBattler].statStages[STAT_ATK] > MAX_STAT_STAGE)
-                    gBattleMons[gActiveBattler].statStages[STAT_ATK] = MAX_STAT_STAGE;
-                retVal = FALSE;
-            }
             break;
 
         // Handle ITEM1 effects (in-battle stat boosting effects)
         case 1:
+            // X Attack
+            if ((itemEffect[i] & ITEM1_X_ATTACK)
+             && gBattleMons[gActiveBattler].statStages[STAT_ATK] < MAX_STAT_STAGE)
+            {
+                gBattleMons[gActiveBattler].statStages[STAT_ATK] += STAT_STAGE_DELTA;
+                if (gBattleMons[gActiveBattler].statStages[STAT_ATK] > MAX_STAT_STAGE)
+                    gBattleMons[gActiveBattler].statStages[STAT_ATK] = MAX_STAT_STAGE;
+                retVal = FALSE;
+            }
+
             // X Defend
             if ((itemEffect[i] & ITEM1_X_DEFEND)
              && gBattleMons[gActiveBattler].statStages[STAT_DEF] < MAX_STAT_STAGE)
             {
-                gBattleMons[gActiveBattler].statStages[STAT_DEF] += (itemEffect[i] & ITEM1_X_DEFEND) >> 4;
+                gBattleMons[gActiveBattler].statStages[STAT_DEF] += STAT_STAGE_DELTA;
                 if (gBattleMons[gActiveBattler].statStages[STAT_DEF] > MAX_STAT_STAGE)
                     gBattleMons[gActiveBattler].statStages[STAT_DEF] = MAX_STAT_STAGE;
                 retVal = FALSE;
@@ -4818,33 +4824,68 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
             if ((itemEffect[i] & ITEM1_X_SPEED)
              && gBattleMons[gActiveBattler].statStages[STAT_SPEED] < MAX_STAT_STAGE)
             {
-                gBattleMons[gActiveBattler].statStages[STAT_SPEED] += itemEffect[i] & ITEM1_X_SPEED;
+                gBattleMons[gActiveBattler].statStages[STAT_SPEED] += STAT_STAGE_DELTA;
                 if (gBattleMons[gActiveBattler].statStages[STAT_SPEED] > MAX_STAT_STAGE)
                     gBattleMons[gActiveBattler].statStages[STAT_SPEED] = MAX_STAT_STAGE;
                 retVal = FALSE;
             }
-            break;
-        // Handle ITEM2 effects (more stat boosting effects)
-        case 2:
+
+            // X Sp Attack
+            if ((itemEffect[i] & ITEM1_X_SPATK)
+             && gBattleMons[gActiveBattler].statStages[STAT_SPATK] < MAX_STAT_STAGE)
+            {
+                gBattleMons[gActiveBattler].statStages[STAT_SPATK] += STAT_STAGE_DELTA;
+                if (gBattleMons[gActiveBattler].statStages[STAT_SPATK] > MAX_STAT_STAGE)
+                    gBattleMons[gActiveBattler].statStages[STAT_SPATK] = MAX_STAT_STAGE;
+                retVal = FALSE;
+            }
+
             // X Accuracy
-            if ((itemEffect[i] & ITEM2_X_ACCURACY)
+            if ((itemEffect[i] & ITEM1_X_ACCURACY)
              && gBattleMons[gActiveBattler].statStages[STAT_ACC] < MAX_STAT_STAGE)
             {
-                gBattleMons[gActiveBattler].statStages[STAT_ACC] += (itemEffect[i] & ITEM2_X_ACCURACY) >> 4;
+                gBattleMons[gActiveBattler].statStages[STAT_ACC] += STAT_STAGE_DELTA;
                 if (gBattleMons[gActiveBattler].statStages[STAT_ACC] > MAX_STAT_STAGE)
                     gBattleMons[gActiveBattler].statStages[STAT_ACC] = MAX_STAT_STAGE;
                 retVal = FALSE;
             }
 
-            // X Sp Attack
-            if ((itemEffect[i] & ITEM2_X_SPATK)
-             && gBattleMons[gActiveBattler].statStages[STAT_SPATK] < MAX_STAT_STAGE)
+            break;
+        // Handle ITEM2 effects (Increase IVs)
+        case 2:
+            effectFlags = itemEffect[i];
+            temp1 = 0;
+
+            while (effectFlags != 0)
             {
-                gBattleMons[gActiveBattler].statStages[STAT_SPATK] += itemEffect[i] & ITEM2_X_SPATK;
-                if (gBattleMons[gActiveBattler].statStages[STAT_SPATK] > MAX_STAT_STAGE)
-                    gBattleMons[gActiveBattler].statStages[STAT_SPATK] = MAX_STAT_STAGE;
-                retVal = FALSE;
+                if (effectFlags & 1)
+                {
+                    temp2 = itemEffect[itemEffectParam];
+                    dataSigned = GetMonData(mon, sGetMonDataIVConstants[temp1], NULL);
+                    ivChange = temp2;
+
+                    // Has IV stat limit already been reached?
+                    if (dataSigned >= MAX_PER_STAT_IVS)
+                        return TRUE;
+
+                    // Limit the increase
+                    if (dataSigned + ivChange > MAX_PER_STAT_IVS)
+                        temp2 = MAX_PER_STAT_IVS - (dataSigned + ivChange) + ivChange;
+                    else
+                        temp2 = ivChange;
+
+                    dataSigned += temp2;
+
+                    // Update IVs and stats
+                    SetMonData(mon, sGetMonDataIVConstants[temp1], &dataSigned);
+                    CalculateMonStats(mon);
+                    itemEffectParam++;
+                    retVal = FALSE;
+                }
+                temp1++;
+                effectFlags >>= 1;
             }
+
             break;
 
         // Handle ITEM3 effects (Guard Spec, Rare Candy, cure status)
@@ -5376,10 +5417,10 @@ u8 GetItemEffectParamOffset(u16 itemId, u8 effectByte, u8 effectBit)
     return offset;
 }
 
-static void BufferStatRoseMessage(s32 statIdx)
+static void BufferStatRoseMessage(u8 stat)
 {
     gBattlerTarget = gBattlerInMenuId;
-    StringCopy(gBattleTextBuff1, gStatNamesTable[sStatsToRaise[statIdx]]);
+    StringCopy(gBattleTextBuff1, gStatNamesTable[stat]);
     StringCopy(gBattleTextBuff2, gText_StatRose);
     BattleStringExpandPlaceholdersToDisplayedString(gText_DefendersStatRose);
 }
@@ -5403,23 +5444,21 @@ u8 *UseStatIncreaseItem(u16 itemId)
 
     gPotentialItemEffectBattler = gBattlerInMenuId;
 
-    for (i = 0; i < 3; i++)
-    {
-        if (itemEffect[i] & (ITEM0_X_ATTACK | ITEM1_X_SPEED | ITEM2_X_SPATK))
-            BufferStatRoseMessage(i * 2);
+    if (itemEffect[1] & ITEM1_X_ATTACK)
+        BufferStatRoseMessage(STAT_ATK);
+    if (itemEffect[1] & ITEM1_X_SPEED)
+        BufferStatRoseMessage(STAT_SPEED);
+    if (itemEffect[1] & ITEM1_X_SPATK)
+        BufferStatRoseMessage(STAT_SPATK);
+    if (itemEffect[1] & ITEM1_X_DEFEND)
+        BufferStatRoseMessage(STAT_DEF);
+    if (itemEffect[1] & ITEM1_X_ACCURACY)
+        BufferStatRoseMessage(STAT_ACC);
 
-        if (itemEffect[i] & (ITEM0_DIRE_HIT | ITEM1_X_DEFEND | ITEM2_X_ACCURACY))
-        {
-            if (i != 0) // Dire Hit is the only ITEM0 above
-            {
-                BufferStatRoseMessage(i * 2 + 1);
-            }
-            else
-            {
-                gBattlerAttacker = gBattlerInMenuId;
-                BattleStringExpandPlaceholdersToDisplayedString(gText_PkmnGettingPumped);
-            }
-        }
+    if (itemEffect[0] & ITEM0_DIRE_HIT)
+    {
+        gBattlerAttacker = gBattlerInMenuId;
+        BattleStringExpandPlaceholdersToDisplayedString(gText_PkmnGettingPumped);
     }
 
     if (itemEffect[3] & ITEM3_GUARD_SPEC)

@@ -2,18 +2,24 @@
 #define GUARD_CONSTANTS_ITEM_EFFECTS_H
 
 // field 0 masks
-#define ITEM0_X_ATTACK          0x0F
 #define ITEM0_DIRE_HIT          0x30 // Works the same way as the move Focus Energy.
 #define ITEM0_SACRED_ASH        0x40
 #define ITEM0_INFATUATION       0x80
 
 // field 1 masks
-#define ITEM1_X_SPEED           0x0F
-#define ITEM1_X_DEFEND          0xF0
+#define ITEM1_X_ATTACK          0x1
+#define ITEM1_X_SPEED           0x2
+#define ITEM1_X_DEFEND          0x4
+#define ITEM1_X_SPATK           0x8
+#define ITEM1_X_ACCURACY        0x10
 
 // field 2 masks
-#define ITEM2_X_SPATK           0x0F
-#define ITEM2_X_ACCURACY        0xF0
+#define ITEM2_IV_HP             0x1
+#define ITEM2_IV_ATK            0x2
+#define ITEM2_IV_DEF            0x4
+#define ITEM2_IV_SPEED          0x8
+#define ITEM2_IV_SPDEF          0x10
+#define ITEM2_IV_SPATK          0x20
 
 // field 3 masks
 #define ITEM3_CONFUSION         0x1
@@ -64,6 +70,9 @@
 #define ITEM6_ADD_EV       10
 #define ITEM6_SUBTRACT_EV -10
 
+// Amount of IV added by ITEM2_IV_HP, ITEM2_IV_ATK, ITEM2_IV_DEF, ITEM2_IV_SPEED, ITEM2_IV_SPDEF and ITEM2_IV_SPATK
+#define ITEM6_ADD_IV       4
+
 // Used for GetItemEffectType.
 #define ITEM_EFFECT_X_ITEM 0
 #define ITEM_EFFECT_RAISE_LEVEL 1
@@ -87,6 +96,12 @@
 #define ITEM_EFFECT_PP_UP 19
 #define ITEM_EFFECT_PP_MAX 20
 #define ITEM_EFFECT_HEAL_PP 21
-#define ITEM_EFFECT_NONE 22
+#define ITEM_EFFECT_ATK_IV 22
+#define ITEM_EFFECT_HP_IV 23
+#define ITEM_EFFECT_SPATK_IV 24
+#define ITEM_EFFECT_SPDEF_IV 25
+#define ITEM_EFFECT_SPEED_IV 26
+#define ITEM_EFFECT_DEF_IV 27
+#define ITEM_EFFECT_NONE 28
 
 #endif // GUARD_CONSTANTS_ITEM_EFFECTS_H

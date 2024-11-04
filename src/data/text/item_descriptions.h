@@ -252,6 +252,35 @@ static const u8 sGreenShardDesc[] = _(
     "be sold cheaply.");
 
 // Vitamins
+static const u8 sMutagenHPDesc[] = _(
+    "Raises the base HP\n"
+    "of one POKéMON.");
+
+static const u8 sMutagenAtkDesc[] = _(
+    "Raises the base\n"
+    "ATTACK stat of one\n"
+    "POKéMON.");
+
+static const u8 sMutagenDefDesc[] = _(
+    "Raises the base\n"
+    "DEFENSE stat of\n"
+    "one POKéMON.");
+
+static const u8 sMutagenSpeedDesc[] = _(
+    "Raises the base\n"
+    "SPEED stat of one\n"
+    "POKéMON.");
+
+static const u8 sMutagenSpDefDesc[] = _(
+    "Raises the base\n"
+    "SP. DEF stat of one\n"
+    "POKéMON.");
+
+static const u8 sMutagenSpAtkDesc[] = _(
+    "Raises the base\n"
+    "SP. ATK stat of one\n"
+    "POKéMON.");
+
 static const u8 sHPUpDesc[] = _(
     "Raises the base HP\n"
     "of one POKéMON.");

@@ -734,73 +734,74 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
 
-    [ITEM_039] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
-
-    [ITEM_03A] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
-
-    [ITEM_03B] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
-
-    [ITEM_03C] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
-
-    [ITEM_03D] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
-
-    [ITEM_03E] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
 
 // Vitamins
+
+    [ITEM_MUTAGEN_HP] =
+    {
+        .name = _("GREEN MUTAGEN"),
+        .itemId = ITEM_MUTAGEN_HP,
+        .price = 9800,
+        .description = sMutagenHPDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Medicine,
+    },
+
+    [ITEM_MUTAGEN_ATK] =
+    {
+        .name = _("RED MUTAGEN"),
+        .itemId = ITEM_MUTAGEN_ATK,
+        .price = 9800,
+        .description = sMutagenAtkDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Medicine,
+    },
+
+    [ITEM_MUTAGEN_DEF] =
+    {
+        .name = _("ORANGE MUTAGEN"),
+        .itemId = ITEM_MUTAGEN_DEF,
+        .price = 9800,
+        .description = sMutagenDefDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Medicine,
+    },
+
+    [ITEM_MUTAGEN_SPEED] =
+    {
+        .name = _("YELLOW MUTAGEN"),
+        .itemId = ITEM_MUTAGEN_SPEED,
+        .price = 9800,
+        .description = sMutagenSpeedDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Medicine,
+    },
+
+    [ITEM_MUTAGEN_SPDEF] =
+    {
+        .name = _("PURPLE MUTAGEN"),
+        .itemId = ITEM_MUTAGEN_SPDEF,
+        .price = 9800,
+        .description = sMutagenSpDefDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Medicine,
+    },
+
+    [ITEM_MUTAGEN_SPATK] =
+    {
+        .name = _("BLUE MUTAGEN"),
+        .itemId = ITEM_MUTAGEN_SPATK,
+        .price = 9800,
+        .description = sMutagenSpAtkDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Medicine,
+    },
 
     [ITEM_HP_UP] =
     {

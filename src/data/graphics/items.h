@@ -130,6 +130,23 @@ const u32 gItemIconPalette_YellowShard[] = INCBIN_U32("graphics/items/icon_palet
 const u32 gItemIconPalette_GreenShard[] = INCBIN_U32("graphics/items/icon_palettes/green_shard.gbapal.lz");
 
 // Vitamins
+const u32 gItemIcon_Mutagen_HP[] = INCBIN_U32("graphics/items/icons/mutagen_hp.4bpp.lz");
+const u32 gItemIconPalette_Mutagen_HP[] = INCBIN_U32("graphics/items/icon_palettes/mutagen_hp.gbapal.lz");
+
+const u32 gItemIcon_Mutagen_Atk[] = INCBIN_U32("graphics/items/icons/mutagen_atk.4bpp.lz");
+const u32 gItemIconPalette_Mutagen_Atk[] = INCBIN_U32("graphics/items/icon_palettes/mutagen_atk.gbapal.lz");
+
+const u32 gItemIcon_Mutagen_Def[] = INCBIN_U32("graphics/items/icons/mutagen_def.4bpp.lz");
+const u32 gItemIconPalette_Mutagen_Def[] = INCBIN_U32("graphics/items/icon_palettes/mutagen_def.gbapal.lz");
+
+const u32 gItemIcon_Mutagen_Speed[] = INCBIN_U32("graphics/items/icons/mutagen_speed.4bpp.lz");
+const u32 gItemIconPalette_Mutagen_Speed[] = INCBIN_U32("graphics/items/icon_palettes/mutagen_speed.gbapal.lz");
+
+const u32 gItemIcon_Mutagen_SpDef[] = INCBIN_U32("graphics/items/icons/mutagen_spdef.4bpp.lz");
+const u32 gItemIconPalette_Mutagen_SpDef[] = INCBIN_U32("graphics/items/icon_palettes/mutagen_spdef.gbapal.lz");
+
+const u32 gItemIcon_Mutagen_SpAtk[] = INCBIN_U32("graphics/items/icons/mutagen_spatk.4bpp.lz");
+const u32 gItemIconPalette_Mutagen_SpAtk[] = INCBIN_U32("graphics/items/icon_palettes/mutagen_spatk.gbapal.lz");
 
 const u32 gItemIcon_HPUp[] = INCBIN_U32("graphics/items/icons/hp_up.4bpp.lz");
 const u32 gItemIconPalette_HPUp[] = INCBIN_U32("graphics/items/icon_palettes/hp_up.gbapal.lz");

@@ -31,6 +31,12 @@ static const u16 sFrontierExchangeCorner_Vitamins[] =
     ITEM_ZINC,
     ITEM_CARBOS,
     ITEM_HP_UP,
+    ITEM_MUTAGEN_HP,
+    ITEM_MUTAGEN_ATK,
+    ITEM_MUTAGEN_DEF,
+    ITEM_MUTAGEN_SPEED,
+    ITEM_MUTAGEN_SPDEF,
+    ITEM_MUTAGEN_SPATK,
     ITEM_LIST_END
 };
 
@@ -81,6 +87,12 @@ static const u8 *const sFrontierExchangeCorner_VitaminsDescriptions[] =
     BattleFrontier_ExchangeServiceCorner_Text_ZincDesc,
     BattleFrontier_ExchangeServiceCorner_Text_CarbosDesc,
     BattleFrontier_ExchangeServiceCorner_Text_HPUpDesc,
+    BattleFrontier_ExchangeServiceCorner_Text_MutagenHpDesc,
+    BattleFrontier_ExchangeServiceCorner_Text_MutagenAtkDesc,
+    BattleFrontier_ExchangeServiceCorner_Text_MutagenDefDesc,
+    BattleFrontier_ExchangeServiceCorner_Text_MutagenSpeedDesc,
+    BattleFrontier_ExchangeServiceCorner_Text_MutagenSpDefDesc,
+    BattleFrontier_ExchangeServiceCorner_Text_MutagenSpAtkDesc,
     gText_Exit
 };
 

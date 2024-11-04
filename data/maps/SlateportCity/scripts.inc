@@ -154,6 +154,12 @@ SlateportCity_Pokemart_EnergyGuru:
 	.2byte ITEM_ZINC
 	.2byte ITEM_CALCIUM
 	.2byte ITEM_HP_UP
+	.2byte ITEM_MUTAGEN_HP
+	.2byte ITEM_MUTAGEN_ATK
+	.2byte ITEM_MUTAGEN_DEF
+	.2byte ITEM_MUTAGEN_SPEED
+	.2byte ITEM_MUTAGEN_SPDEF
+	.2byte ITEM_MUTAGEN_SPATK
 	.2byte ITEM_NONE
 	release
 	end
@@ -777,7 +783,13 @@ SlateportCity_EventScript_ChooseBerryPowderItem::
 	case 8, SlateportCity_EventScript_Zinc
 	case 9, SlateportCity_EventScript_HPUp
 	case 10, SlateportCity_EventScript_PPUp
-	case 11, SlateportCity_EventScript_CancelPowderItemSelect
+	case 11, SlateportCity_EventScript_Mutagen_HP
+	case 12, SlateportCity_EventScript_Mutagen_Atk
+	case 13, SlateportCity_EventScript_Mutagen_Def
+	case 14, SlateportCity_EventScript_Mutagen_Speed
+	case 15, SlateportCity_EventScript_Mutagen_SpDef
+	case 16, SlateportCity_EventScript_Mutagen_SpAtk
+	case 17, SlateportCity_EventScript_CancelPowderItemSelect
 	case MULTI_B_PRESSED, SlateportCity_EventScript_CancelPowderItemSelect
 	end
 
@@ -855,6 +867,48 @@ SlateportCity_EventScript_PPUp::
 	bufferitemname STR_VAR_1, ITEM_PP_UP
 	setvar VAR_0x8008, ITEM_PP_UP
 	setvar VAR_0x8009, 3000
+	goto SlateportCity_EventScript_TryBuyBerryPowderItem
+	end
+
+SlateportCity_EventScript_Mutagen_HP::
+	bufferitemname STR_VAR_1, ITEM_MUTAGEN_HP
+	setvar VAR_0x8008, ITEM_MUTAGEN_HP
+	setvar VAR_0x8009, 1000
+	goto SlateportCity_EventScript_TryBuyBerryPowderItem
+	end
+
+SlateportCity_EventScript_Mutagen_Atk::
+	bufferitemname STR_VAR_1, ITEM_MUTAGEN_ATK
+	setvar VAR_0x8008, ITEM_MUTAGEN_ATK
+	setvar VAR_0x8009, 1000
+	goto SlateportCity_EventScript_TryBuyBerryPowderItem
+	end
+
+SlateportCity_EventScript_Mutagen_Def::
+	bufferitemname STR_VAR_1, ITEM_MUTAGEN_DEF
+	setvar VAR_0x8008, ITEM_MUTAGEN_DEF
+	setvar VAR_0x8009, 1000
+	goto SlateportCity_EventScript_TryBuyBerryPowderItem
+	end
+
+SlateportCity_EventScript_Mutagen_Speed::
+	bufferitemname STR_VAR_1, ITEM_MUTAGEN_SPEED
+	setvar VAR_0x8008, ITEM_MUTAGEN_SPEED
+	setvar VAR_0x8009, 1000
+	goto SlateportCity_EventScript_TryBuyBerryPowderItem
+	end
+
+SlateportCity_EventScript_Mutagen_SpDef::
+	bufferitemname STR_VAR_1, ITEM_MUTAGEN_SPDEF
+	setvar VAR_0x8008, ITEM_MUTAGEN_SPDEF
+	setvar VAR_0x8009, 1000
+	goto SlateportCity_EventScript_TryBuyBerryPowderItem
+	end
+
+SlateportCity_EventScript_Mutagen_SpAtk::
+	bufferitemname STR_VAR_1, ITEM_MUTAGEN_SPATK
+	setvar VAR_0x8008, ITEM_MUTAGEN_SPATK
+	setvar VAR_0x8009, 1000
 	goto SlateportCity_EventScript_TryBuyBerryPowderItem
 	end
 

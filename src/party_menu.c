@@ -4429,26 +4429,32 @@ static void GetMedicineItemEffectMessage(u16 item)
         StringExpandPlaceholders(gStringVar4, gText_PkmnBecameHealthy);
         break;
     case ITEM_EFFECT_HP_EV:
+    case ITEM_EFFECT_HP_IV:
         StringCopy(gStringVar2, gText_HP3);
         StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
         break;
     case ITEM_EFFECT_ATK_EV:
+    case ITEM_EFFECT_ATK_IV:
         StringCopy(gStringVar2, gText_Attack3);
         StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
         break;
     case ITEM_EFFECT_DEF_EV:
+    case ITEM_EFFECT_DEF_IV:
         StringCopy(gStringVar2, gText_Defense3);
         StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
         break;
     case ITEM_EFFECT_SPEED_EV:
+    case ITEM_EFFECT_SPEED_IV:
         StringCopy(gStringVar2, gText_Speed2);
         StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
         break;
     case ITEM_EFFECT_SPATK_EV:
+    case ITEM_EFFECT_SPATK_IV:
         StringCopy(gStringVar2, gText_SpAtk3);
         StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
         break;
     case ITEM_EFFECT_SPDEF_EV:
+    case ITEM_EFFECT_SPDEF_IV:
         StringCopy(gStringVar2, gText_SpDef3);
         StringExpandPlaceholders(gStringVar4, gText_PkmnBaseVar2StatIncreased);
         break;
@@ -5355,7 +5361,7 @@ u8 GetItemEffectType(u16 item)
     else
         itemEffect = gItemEffectTable[item - ITEM_POTION];
 
-    if ((itemEffect[0] & (ITEM0_DIRE_HIT | ITEM0_X_ATTACK)) || itemEffect[1] || itemEffect[2] || (itemEffect[3] & ITEM3_GUARD_SPEC))
+    if ((itemEffect[0] & ITEM0_DIRE_HIT) || itemEffect[1] || (itemEffect[3] & ITEM3_GUARD_SPEC))
         return ITEM_EFFECT_X_ITEM;
     else if (itemEffect[0] & ITEM0_SACRED_ASH)
         return ITEM_EFFECT_SACRED_ASH;
@@ -5405,8 +5411,20 @@ u8 GetItemEffectType(u16 item)
         return ITEM_EFFECT_PP_MAX;
     else if (itemEffect[4] & (ITEM4_HEAL_PP | ITEM4_HEAL_PP_ONE))
         return ITEM_EFFECT_HEAL_PP;
-    else
-        return ITEM_EFFECT_NONE;
+    else if (itemEffect[2] & ITEM2_IV_HP)
+        return ITEM_EFFECT_HP_IV;
+    else if (itemEffect[2] & ITEM2_IV_ATK)
+        return ITEM_EFFECT_ATK_IV;
+    else if (itemEffect[2] & ITEM2_IV_DEF)
+        return ITEM_EFFECT_DEF_IV;
+    else if (itemEffect[2] & ITEM2_IV_SPEED)
+        return ITEM_EFFECT_SPEED_IV;
+    else if (itemEffect[2] & ITEM2_IV_SPDEF)
+        return ITEM_EFFECT_SPDEF_IV;
+    else if (itemEffect[2] & ITEM2_IV_SPATK)
+        return ITEM_EFFECT_SPATK_IV;
+    
+    return ITEM_EFFECT_NONE;
 }
 
 static void TryTutorSelectedMon(u8 taskId)

@@ -3447,6 +3447,18 @@ extern const u32 gItemIconPalette_BlueShard[];
 extern const u32 gItemIconPalette_YellowShard[];
 extern const u32 gItemIconPalette_GreenShard[];
 // Vitamins
+extern const u32 gItemIcon_Mutagen_HP[];
+extern const u32 gItemIconPalette_Mutagen_HP[];
+extern const u32 gItemIcon_Mutagen_Atk[];
+extern const u32 gItemIconPalette_Mutagen_Atk[];
+extern const u32 gItemIcon_Mutagen_Def[];
+extern const u32 gItemIconPalette_Mutagen_Def[];
+extern const u32 gItemIcon_Mutagen_Speed[];
+extern const u32 gItemIconPalette_Mutagen_Speed[];
+extern const u32 gItemIcon_Mutagen_SpDef[];
+extern const u32 gItemIconPalette_Mutagen_SpDef[];
+extern const u32 gItemIcon_Mutagen_SpAtk[];
+extern const u32 gItemIconPalette_Mutagen_SpAtk[];
 extern const u32 gItemIcon_HPUp[];
 extern const u32 gItemIconPalette_HPUp[];
 extern const u32 gItemIcon_Vitamin[];

@@ -165,6 +165,48 @@ const u8 gItemEffect_SacredAsh[7] = {
     [(i) + 1] = 3, /* Friendship change, mid */  \
     [(i) + 2] = 2  /* Friendship change, high */
 
+const u8 gItemEffect_MutagenHp[10] = {
+    [2] = ITEM2_IV_HP,
+    [5] = ITEM5_FRIENDSHIP_ALL,
+    [6] = ITEM6_ADD_IV,
+    VITAMIN_FRIENDSHIP_CHANGE(7),
+};
+
+const u8 gItemEffect_MutagenAtk[10] = {
+    [2] = ITEM2_IV_ATK,
+    [5] = ITEM5_FRIENDSHIP_ALL,
+    [6] = ITEM6_ADD_IV,
+    VITAMIN_FRIENDSHIP_CHANGE(7),
+};
+
+const u8 gItemEffect_MutagenDef[10] = {
+    [2] = ITEM2_IV_DEF,
+    [5] = ITEM5_FRIENDSHIP_ALL,
+    [6] = ITEM6_ADD_IV,
+    VITAMIN_FRIENDSHIP_CHANGE(7),
+};
+
+const u8 gItemEffect_MutagenSpeed[10] = {
+    [2] = ITEM2_IV_SPEED,
+    [5] = ITEM5_FRIENDSHIP_ALL,
+    [6] = ITEM6_ADD_IV,
+    VITAMIN_FRIENDSHIP_CHANGE(7),
+};
+
+const u8 gItemEffect_MutagenSpDef[10] = {
+    [2] = ITEM2_IV_SPDEF,
+    [5] = ITEM5_FRIENDSHIP_ALL,
+    [6] = ITEM6_ADD_IV,
+    VITAMIN_FRIENDSHIP_CHANGE(7),
+};
+
+const u8 gItemEffect_MutagenSpAtk[10] = {
+    [2] = ITEM2_IV_SPATK,
+    [5] = ITEM5_FRIENDSHIP_ALL,
+    [6] = ITEM6_ADD_IV,
+    VITAMIN_FRIENDSHIP_CHANGE(7),
+};
+
 const u8 gItemEffect_HPUp[10] = {
     [4] = ITEM4_EV_HP,
     [5] = ITEM5_FRIENDSHIP_ALL,
@@ -243,31 +285,31 @@ const u8 gItemEffect_DireHit[8] = {
 };
 
 const u8 gItemEffect_XAttack[8] = {
-    [0] = 1, // ITEM0_X_ATTACK
+    [1] = ITEM1_X_ATTACK,
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
 const u8 gItemEffect_XDefend[8] = {
-    [1] = 1 << 4, /// ITEM1_X_DEFEND
+    [1] = ITEM1_X_DEFEND,
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
 const u8 gItemEffect_XSpeed[8] = {
-    [1] = 1, // ITEM1_X_SPEED
+    [1] = ITEM1_X_SPEED,
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
 const u8 gItemEffect_XAccuracy[8] = {
-    [2] = 1 << 4, // ITEM2_X_ACCURACY
+    [1] = ITEM1_X_ACCURACY,
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
 const u8 gItemEffect_XSpecial[8] = {
-    [2] = 1, // ITEM2_X_SPATK
+    [1] = ITEM1_X_SPATK,
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
@@ -415,6 +457,12 @@ const u8 *const gItemEffectTable[] =
     [ITEM_RED_FLUTE - ITEM_POTION]     = gItemEffect_RedFlute,
     [ITEM_BERRY_JUICE - ITEM_POTION]   = gItemEffect_BerryJuice,
     [ITEM_SACRED_ASH - ITEM_POTION]    = gItemEffect_SacredAsh,
+    [ITEM_MUTAGEN_HP - ITEM_POTION]    = gItemEffect_MutagenHp,
+    [ITEM_MUTAGEN_ATK - ITEM_POTION]   = gItemEffect_MutagenAtk,
+    [ITEM_MUTAGEN_DEF - ITEM_POTION]   = gItemEffect_MutagenDef,
+    [ITEM_MUTAGEN_SPEED - ITEM_POTION] = gItemEffect_MutagenSpeed,
+    [ITEM_MUTAGEN_SPDEF - ITEM_POTION] = gItemEffect_MutagenSpDef,
+    [ITEM_MUTAGEN_SPATK - ITEM_POTION] = gItemEffect_MutagenSpAtk,
     [ITEM_HP_UP - ITEM_POTION]         = gItemEffect_HPUp,
     [ITEM_PROTEIN - ITEM_POTION]       = gItemEffect_Protein,
     [ITEM_IRON - ITEM_POTION]          = gItemEffect_Iron,

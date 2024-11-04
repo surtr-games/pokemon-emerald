@@ -260,7 +260,13 @@ BattleFrontier_ExchangeServiceCorner_EventScript_ChooseVitamin::
 	case 3, BattleFrontier_ExchangeServiceCorner_EventScript_Zinc
 	case 4, BattleFrontier_ExchangeServiceCorner_EventScript_Carbos
 	case 5, BattleFrontier_ExchangeServiceCorner_EventScript_HPUp
-	case 6, BattleFrontier_ExchangeServiceCorner_EventScript_ClerkGoodbye
+	case 6, BattleFrontier_ExchangeServiceCorner_EventScript_MutagenHp
+	case 7, BattleFrontier_ExchangeServiceCorner_EventScript_MutagenAtk
+	case 8, BattleFrontier_ExchangeServiceCorner_EventScript_MutagenDef
+	case 9, BattleFrontier_ExchangeServiceCorner_EventScript_MutagenSpeed
+	case 10, BattleFrontier_ExchangeServiceCorner_EventScript_MutagenSpDef
+	case 11, BattleFrontier_ExchangeServiceCorner_EventScript_MutagenSpAtk
+	case 12, BattleFrontier_ExchangeServiceCorner_EventScript_ClerkGoodbye
 	case MULTI_B_PRESSED, BattleFrontier_ExchangeServiceCorner_EventScript_ClerkGoodbye
 	end
 
@@ -309,6 +315,54 @@ BattleFrontier_ExchangeServiceCorner_EventScript_HPUp::
 	goto_if_eq VAR_RESULT, NO, BattleFrontier_ExchangeServiceCorner_EventScript_ChooseVitamin
 	setvar VAR_0x8008, 1
 	setvar VAR_0x8009, ITEM_HP_UP
+	goto BattleFrontier_ExchangeServiceCorner_EventScript_TryPurchasePrize
+	end
+
+BattleFrontier_ExchangeServiceCorner_EventScript_MutagenHp::
+	msgbox BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenHp, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, BattleFrontier_ExchangeServiceCorner_EventScript_ChooseVitamin
+	setvar VAR_0x8008, 1
+	setvar VAR_0x8009, ITEM_MUTAGEN_HP
+	goto BattleFrontier_ExchangeServiceCorner_EventScript_TryPurchasePrize
+	end
+
+BattleFrontier_ExchangeServiceCorner_EventScript_MutagenAtk::
+	msgbox BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenAtk, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, BattleFrontier_ExchangeServiceCorner_EventScript_ChooseVitamin
+	setvar VAR_0x8008, 1
+	setvar VAR_0x8009, ITEM_MUTAGEN_ATK
+	goto BattleFrontier_ExchangeServiceCorner_EventScript_TryPurchasePrize
+	end
+
+BattleFrontier_ExchangeServiceCorner_EventScript_MutagenDef::
+	msgbox BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenDef, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, BattleFrontier_ExchangeServiceCorner_EventScript_ChooseVitamin
+	setvar VAR_0x8008, 1
+	setvar VAR_0x8009, ITEM_MUTAGEN_DEF
+	goto BattleFrontier_ExchangeServiceCorner_EventScript_TryPurchasePrize
+	end
+
+BattleFrontier_ExchangeServiceCorner_EventScript_MutagenSpeed::
+	msgbox BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenSpeed, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, BattleFrontier_ExchangeServiceCorner_EventScript_ChooseVitamin
+	setvar VAR_0x8008, 1
+	setvar VAR_0x8009, ITEM_MUTAGEN_SPEED
+	goto BattleFrontier_ExchangeServiceCorner_EventScript_TryPurchasePrize
+	end
+
+BattleFrontier_ExchangeServiceCorner_EventScript_MutagenSpDef::
+	msgbox BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenSpDef, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, BattleFrontier_ExchangeServiceCorner_EventScript_ChooseVitamin
+	setvar VAR_0x8008, 1
+	setvar VAR_0x8009, ITEM_MUTAGEN_SPDEF
+	goto BattleFrontier_ExchangeServiceCorner_EventScript_TryPurchasePrize
+	end
+
+BattleFrontier_ExchangeServiceCorner_EventScript_MutagenSpAtk::
+	msgbox BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenSpAtk, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, BattleFrontier_ExchangeServiceCorner_EventScript_ChooseVitamin
+	setvar VAR_0x8008, 1
+	setvar VAR_0x8009, ITEM_MUTAGEN_SPATK
 	goto BattleFrontier_ExchangeServiceCorner_EventScript_TryPurchasePrize
 	end
 
@@ -529,6 +583,30 @@ BattleFrontier_ExchangeServiceCorner_Text_ConfirmHPUp:
 	.string "You've chosen the HP UP.\n"
 	.string "Is that correct?$"
 
+BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenHp:
+	.string "You've chosen the GREEN MUTAGEN.\n"
+	.string "Is that correct?$"
+
+BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenAtk:
+	.string "You've chosen the RED MUTAGEN.\n"
+	.string "Is that correct?$"
+
+BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenDef:
+	.string "You've chosen the ORANGE MUTAGEN.\n"
+	.string "Is that correct?$"
+
+BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenSpeed:
+	.string "You've chosen the YELLOW MUTAGEN.\n"
+	.string "Is that correct?$"
+
+BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenSpDef:
+	.string "You've chosen the PURPLE MUTAGEN.\n"
+	.string "Is that correct?$"
+
+BattleFrontier_ExchangeServiceCorner_Text_ConfirmMutagenSpAtk:
+	.string "You've chosen the BLUE MUTAGEN.\n"
+	.string "Is that correct?$"
+
 BattleFrontier_ExchangeServiceCorner_Text_ConfirmBrightpowder:
 	.string "You've chosen the BRIGHTPOWDER.\n"
 	.string "Is that correct?$"
@@ -686,6 +764,29 @@ BattleFrontier_ExchangeServiceCorner_Text_CarbosDesc::
 	.string "POKéMON.$"
 
 BattleFrontier_ExchangeServiceCorner_Text_HPUpDesc::
+	.string "Raises the HP of one POKéMON.$"
+
+BattleFrontier_ExchangeServiceCorner_Text_MutagenAtkDesc::
+	.string "Raises the stat ATTACK of one\n"
+	.string "POKéMON.$"
+
+BattleFrontier_ExchangeServiceCorner_Text_MutagenSpAtkDesc::
+	.string "Raises the stat SP. ATK of one\n"
+	.string "POKéMON.$"
+
+BattleFrontier_ExchangeServiceCorner_Text_MutagenDefDesc::
+	.string "Raises the stat DEFENSE of one\n"
+	.string "POKéMON.$"
+
+BattleFrontier_ExchangeServiceCorner_Text_MutagenSpDefDesc::
+	.string "Raises the stat SP. DEF of one\n"
+	.string "POKéMON.$"
+
+BattleFrontier_ExchangeServiceCorner_Text_MutagenSpeedDesc::
+	.string "Raises the stat SPEED of one\n"
+	.string "POKéMON.$"
+
+BattleFrontier_ExchangeServiceCorner_Text_MutagenHpDesc::
 	.string "Raises the HP of one POKéMON.$"
 
 BattleFrontier_ExchangeServiceCorner_Text_LeftoversDesc::
