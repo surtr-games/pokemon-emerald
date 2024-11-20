@@ -551,6 +551,15 @@
 	.4byte \param2
 	.endm
 
+	.macro get_move_category_from_result
+	.byte 0x63
+	.endm
+
+	.macro are_most_moves_of_category_on_target_mon category:req
+	.byte 0x64
+	.byte \category
+	.endm
+
 @ useful script macros
 	.macro get_curr_move_type
 	get_type AI_TYPE_MOVE

@@ -132,6 +132,7 @@ static void Cmd_get_used_held_item(void);
 static void Cmd_get_move_type_from_result(void);
 static void Cmd_get_move_power_from_result(void);
 static void Cmd_get_move_effect_from_result(void);
+static void Cmd_get_move_category_from_result(void);
 static void Cmd_get_protect_count(void);
 static void Cmd_nop_52(void);
 static void Cmd_nop_53(void);
@@ -150,6 +151,7 @@ static void Cmd_is_of_type(void);
 static void Cmd_if_target_is_ally(void);
 static void Cmd_if_flash_fired(void);
 static void Cmd_if_holds_item(void);
+static void Cmd_are_most_moves_of_category_on_target_mon(void);
 
 // ewram
 EWRAM_DATA const u8 *gAIScriptPtr = NULL;
@@ -259,6 +261,8 @@ static const BattleAICmdFunc sBattleAICmdTable[] =
     Cmd_check_ability,                              // 0x60
     Cmd_if_flash_fired,                             // 0x61
     Cmd_if_holds_item,                              // 0x62
+    Cmd_get_move_category_from_result,              // 0x63
+    Cmd_are_most_moves_of_category_on_target_mon,   // 0x64
 };
 
 // For the purposes of determining the most powerful move in a moveset, these
@@ -2138,6 +2142,58 @@ static void Cmd_get_move_type_from_result(void)
     AI_THINKING_STRUCT->funcResult = gBattleMoves[AI_THINKING_STRUCT->funcResult].type;
 
     gAIScriptPtr += 1;
+}
+
+static void Cmd_get_move_category_from_result(void)
+{
+    AI_THINKING_STRUCT->funcResult = gBattleMoves[AI_THINKING_STRUCT->funcResult].category;
+
+    gAIScriptPtr += 1;
+}
+
+static void Cmd_are_most_moves_of_category_on_target_mon(void)
+{
+    s32 i;
+    u8 category = gAIScriptPtr[1];
+    u32 physicalMoveCount = 0;
+    u32 specialMoveCount = 0;
+    u32 totalMoveCountExceptStatus = 0;
+
+    // Checking for a majority of status category is not supported because we ignore it
+    AGB_ASSERT(category != MOVE_CATEGORY_STATUS);
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (BATTLE_HISTORY->usedMoves[gBattlerTarget].moves[i] == MOVE_NONE)
+            continue;
+
+        if (IS_MOVE_PHYSICAL(BATTLE_HISTORY->usedMoves[gBattlerTarget].moves[i]))
+        {
+            ++physicalMoveCount;
+        }
+        else if (IS_MOVE_SPECIAL(BATTLE_HISTORY->usedMoves[gBattlerTarget].moves[i]))
+        {
+            ++specialMoveCount;
+        }
+    }
+
+    totalMoveCountExceptStatus = physicalMoveCount + specialMoveCount;
+
+    if (totalMoveCountExceptStatus != 0)
+    {
+        if (category == MOVE_CATEGORY_PHYSICAL)
+            AI_THINKING_STRUCT->funcResult = physicalMoveCount > (totalMoveCountExceptStatus / 2);
+        else if (category == MOVE_CATEGORY_SPECIAL)
+            AI_THINKING_STRUCT->funcResult = specialMoveCount > (totalMoveCountExceptStatus / 2);
+        else
+            AI_THINKING_STRUCT->funcResult = FALSE;
+    }
+    else
+    {
+        AI_THINKING_STRUCT->funcResult = FALSE;
+    }
+
+    gAIScriptPtr += 2;
 }
 
 static void Cmd_get_move_power_from_result(void)

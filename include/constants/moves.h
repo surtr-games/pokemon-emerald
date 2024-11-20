@@ -1,6 +1,11 @@
 #ifndef GUARD_CONSTANTS_MOVES_H
 #define GUARD_CONSTANTS_MOVES_H
 
+// Move categories
+#define MOVE_CATEGORY_PHYSICAL 0
+#define MOVE_CATEGORY_SPECIAL  1
+#define MOVE_CATEGORY_STATUS   2
+
 #define MOVE_NONE 0
 #define MOVE_POUND 1
 #define MOVE_KARATE_CHOP 2
