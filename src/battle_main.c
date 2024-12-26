@@ -1679,7 +1679,9 @@ static void CB2_HandleStartMultiBattle(void)
             gBattleCommunication[MULTIUSE_STATE]++;
         }
         else
+        {
             break;
+        }
         // fall through
     case 3:
         if (IsLinkTaskFinished())
@@ -3109,7 +3111,9 @@ static void BattleStartClearSetData(void)
             gHitMarker |= HITMARKER_NO_ANIMATIONS;
     }
     else if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK)) && GetBattleSceneInRecordedBattle())
+    {
         gHitMarker |= HITMARKER_NO_ANIMATIONS;
+    }
 
     gBattleScripting.battleStyle = gSaveBlock2Ptr->optionsBattleStyle;
 
@@ -3611,7 +3615,9 @@ static void BattleIntroPrintOpponentSendsOut(void)
         return;
 
     if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+    {
         position = B_POSITION_OPPONENT_LEFT;
+    }
     else if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_LINK)
     {
         if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_IS_MASTER)
@@ -3620,7 +3626,9 @@ static void BattleIntroPrintOpponentSendsOut(void)
             position = B_POSITION_PLAYER_LEFT;
     }
     else
+    {
         position = B_POSITION_OPPONENT_LEFT;
+    }
 
     PrepareStringBattle(STRINGID_INTROSENDOUT, GetBattlerAtPosition(position));
     gBattleMainFunc = BattleIntroOpponent1SendsOutMonAnimation;
@@ -3631,7 +3639,9 @@ static void BattleIntroOpponent2SendsOutMonAnimation(void)
     u32 position;
 
     if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+    {
         position = B_POSITION_OPPONENT_RIGHT;
+    }
     else if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_LINK)
     {
         if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_IS_MASTER)
@@ -3640,7 +3650,9 @@ static void BattleIntroOpponent2SendsOutMonAnimation(void)
             position = B_POSITION_PLAYER_RIGHT;
     }
     else
+    {
         position = B_POSITION_OPPONENT_RIGHT;
+    }
 
     for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
     {
@@ -3668,10 +3680,14 @@ static void BattleIntroOpponent1SendsOutMonAnimation(void)
                 position = B_POSITION_PLAYER_LEFT;
         }
         else
+        {
             position = B_POSITION_OPPONENT_LEFT;
+        }
     }
     else
+    {
         position = B_POSITION_OPPONENT_LEFT;
+    }
 
     if (gBattleControllerExecFlags)
         return;
@@ -3726,7 +3742,9 @@ static void BattleIntroPrintPlayerSendsOut(void)
         u8 position;
 
         if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+        {
             position = B_POSITION_PLAYER_LEFT;
+        }
         else if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_LINK)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_IS_MASTER)
@@ -3735,7 +3753,9 @@ static void BattleIntroPrintPlayerSendsOut(void)
                 position = B_POSITION_OPPONENT_LEFT;
         }
         else
+        {
             position = B_POSITION_PLAYER_LEFT;
+        }
 
         if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
             PrepareStringBattle(STRINGID_INTROSENDOUT, GetBattlerAtPosition(position));
@@ -3749,7 +3769,9 @@ static void BattleIntroPlayer2SendsOutMonAnimation(void)
     u32 position;
 
     if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+    {
         position = B_POSITION_PLAYER_RIGHT;
+    }
     else if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_LINK)
     {
         if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_IS_MASTER)
@@ -3758,7 +3780,9 @@ static void BattleIntroPlayer2SendsOutMonAnimation(void)
             position = B_POSITION_OPPONENT_RIGHT;
     }
     else
+    {
         position = B_POSITION_PLAYER_RIGHT;
+    }
 
     for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
     {
@@ -3781,7 +3805,9 @@ static void BattleIntroPlayer1SendsOutMonAnimation(void)
     u32 position;
 
     if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+    {
         position = B_POSITION_PLAYER_LEFT;
+    }
     else if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_LINK)
     {
         if (gBattleTypeFlags & BATTLE_TYPE_RECORDED_IS_MASTER)
@@ -3790,7 +3816,9 @@ static void BattleIntroPlayer1SendsOutMonAnimation(void)
             position = B_POSITION_OPPONENT_LEFT;
     }
     else
+    {
         position = B_POSITION_PLAYER_LEFT;
+    }
 
     if (gBattleControllerExecFlags)
         return;
@@ -4707,7 +4735,9 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
                 moveBattler1 = gBattleMons[battler1].moves[*(gBattleStruct->chosenMovePositions + battler1)];
         }
         else
+        {
             moveBattler1 = MOVE_NONE;
+        }
 
         if (gChosenActionByBattler[battler2] == B_ACTION_USE_MOVE)
         {
@@ -4717,7 +4747,9 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
                 moveBattler2 = gBattleMons[battler2].moves[*(gBattleStruct->chosenMovePositions + battler2)];
         }
         else
+        {
             moveBattler2 = MOVE_NONE;
+        }
     }
 
     // both move priorities are different than 0
@@ -4734,7 +4766,9 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
             // else battler1 has more speed
         }
         else if (gBattleMoves[moveBattler1].priority < gBattleMoves[moveBattler2].priority)
+        {
             strikesFirst = 1; // battler2's move has greater priority
+        }
 
         // else battler1's move has greater priority
     }
