@@ -3492,7 +3492,7 @@ static void DebugAction_Give_Pokemon_ComplexCreateMon(u8 taskId) //https://githu
         do
         {
             personality = Random32();
-            personality = ((((Random() % 8) ^ (HIHALF(otid) ^ LOHALF(otid))) ^ LOHALF(personality)) << 16) | LOHALF(personality);
+            personality = ((((Random() % SHINY_ODDS) ^ (HIHALF(otid) ^ LOHALF(otid))) ^ LOHALF(personality)) << 16) | LOHALF(personality);
         } while (nature != GetNatureFromPersonality(personality));
 
         CreateMon(&mon, species, level, 32, 1, personality, OT_ID_PRESET, otid);

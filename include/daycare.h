@@ -10,6 +10,13 @@ struct RecordMixingDaycareMail
     bool16 cantHoldItem[DAYCARE_MON_COUNT];
 };
 
+enum EggIVInheritanceResult
+{
+    EGG_IV_INCREASE,
+    EGG_IV_KEEP,
+    EGG_IV_DECREASE
+};
+
 u8 *GetMonNickname2(struct Pokemon *mon, u8 *dest);
 u8 *GetBoxMonNickname(struct BoxPokemon *mon, u8 *dest);
 u8 CountPokemonInDaycare(struct DayCare *daycare);

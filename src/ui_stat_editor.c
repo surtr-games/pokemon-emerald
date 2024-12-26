@@ -693,7 +693,7 @@ static void PrintMonStats()
     AddTextPrinterParameterized4(WINDOW_2, FONT_NARROW, 29, STARTING_Y + (DISTANCE_BETWEEN_STATS_Y * 6), 0, 0, sMenuWindowFontColors[FONT_WHITE], 0xFF, sText_MenuTotal);
 
     // Print Mon Stats
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < NUM_STATS; i++)
     {
         currentStat = GetMonData(GetMon(), statsToPrintActual[i]);
         sStatEditorDataPtr->normalTotal += currentStat;
@@ -701,7 +701,7 @@ static void PrintMonStats()
         AddTextPrinterParameterized4(WINDOW_2, FONT_NORMAL, StatPrintData[statsToPrintActual[i]].x, StatPrintData[statsToPrintActual[i]].y, 0, 0, sMenuWindowFontColors[FONT_WHITE], 0xFF, gStringVar2);
     }
 
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < NUM_STATS; i++)
     {
         currentStat = GetMonData(GetMon(), statsToPrintEVs[i]);
         sStatEditorDataPtr->evTotal += currentStat;
@@ -968,7 +968,7 @@ static void InitializeMonStats()
 
     sStatEditorDataPtr->initialEvTotal = 0;
 
-    for (i = 0; i < 6; i++)
+    for (i = 0; i < NUM_STATS; i++)
     {
         sStatEditorDataPtr->initialEvStats[i] = GetMonData(GetMon(), selectedStatToStatEnum[i]);
         sStatEditorDataPtr->initialEvTotal += sStatEditorDataPtr->initialEvStats[i];
@@ -980,7 +980,7 @@ static void InitializeMonStats()
 static void UndoStatChanges()
 {
     u16 i;
-    for (i = 0; i < 6; i++)
+    for (i = 0; i < NUM_STATS; i++)
     {
         ChangeAndUpdateStat(i, sStatEditorDataPtr->initialEvStats[i]);
     }

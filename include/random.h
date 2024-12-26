@@ -20,4 +20,11 @@ u16 Random2(void);
 void SeedRng(u16 seed);
 void SeedRng2(u16 seed);
 
+// Check random against probability [0, 100]
+bool8 IsRandomProbMet(u16 probability);
+bool8 IsRandomProbMetWithValue(u16 randomValue, u16 probability);
+
+s32 RandomInRange(s32 min, s32 max);
+s32 RandomInRangeWithValue(u16 randomValue, s32 min, s32 max);
+
 #endif // GUARD_RANDOM_H
