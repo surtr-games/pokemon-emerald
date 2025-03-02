@@ -1470,7 +1470,7 @@ static void LoadContestResultsTitleBarTilemaps(void)
 static u8 GetNumPreliminaryPoints(u8 monIndex, bool8 capPoints)
 {
     u32 condition = gContestMonRound1Points[monIndex] << 16;
-    u32 numStars = condition / 0x3F;
+    u32 numStars = condition / 0x33; // 51 = u8_max + (u8_max + u8_max) / 2 / 10
 
     if (numStars & 0xFFFF)
         numStars += 0x10000;

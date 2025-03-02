@@ -530,62 +530,62 @@ ContestHall_EventScript_DisplayHearts::
 	return
 
 ContestHall_EventScript_GetNumberOfHeartsNormal::
-	goto_if_gt VAR_0x8004, 80, ContestHall_EventScript_Set8Hearts
-	goto_if_gt VAR_0x8004, 70, ContestHall_EventScript_Set7Hearts
-	goto_if_gt VAR_0x8004, 60, ContestHall_EventScript_Set6Hearts
-	goto_if_gt VAR_0x8004, 50, ContestHall_EventScript_Set5Hearts
-	goto_if_gt VAR_0x8004, 40, ContestHall_EventScript_Set4Hearts
-	goto_if_gt VAR_0x8004, 30, ContestHall_EventScript_Set3Hearts
-	goto_if_gt VAR_0x8004, 20, ContestHall_EventScript_Set2Hearts
-	goto_if_gt VAR_0x8004, 10, ContestHall_EventScript_Set1Heart
+	goto_if_gt VAR_0x8004, 64, ContestHall_EventScript_Set8Hearts
+	goto_if_gt VAR_0x8004, 56, ContestHall_EventScript_Set7Hearts
+	goto_if_gt VAR_0x8004, 48, ContestHall_EventScript_Set6Hearts
+	goto_if_gt VAR_0x8004, 40, ContestHall_EventScript_Set5Hearts
+	goto_if_gt VAR_0x8004, 32, ContestHall_EventScript_Set4Hearts
+	goto_if_gt VAR_0x8004, 24, ContestHall_EventScript_Set3Hearts
+	goto_if_gt VAR_0x8004, 16, ContestHall_EventScript_Set2Hearts
+	goto_if_gt VAR_0x8004, 8, ContestHall_EventScript_Set1Heart
 	setvar VAR_TEMP_0, 0
 	return
 
 ContestHall_EventScript_GetNumberOfHeartsSuper::
-	goto_if_gt VAR_0x8004, 230, ContestHall_EventScript_Set8Hearts
-	goto_if_gt VAR_0x8004, 210, ContestHall_EventScript_Set7Hearts
-	goto_if_gt VAR_0x8004, 190, ContestHall_EventScript_Set6Hearts
-	goto_if_gt VAR_0x8004, 170, ContestHall_EventScript_Set5Hearts
-	goto_if_gt VAR_0x8004, 150, ContestHall_EventScript_Set4Hearts
-	goto_if_gt VAR_0x8004, 130, ContestHall_EventScript_Set3Hearts
-	goto_if_gt VAR_0x8004, 110, ContestHall_EventScript_Set2Hearts
-	goto_if_gt VAR_0x8004, 90, ContestHall_EventScript_Set1Heart
+	goto_if_gt VAR_0x8004, 184, ContestHall_EventScript_Set8Hearts
+	goto_if_gt VAR_0x8004, 168, ContestHall_EventScript_Set7Hearts
+	goto_if_gt VAR_0x8004, 152, ContestHall_EventScript_Set6Hearts
+	goto_if_gt VAR_0x8004, 136, ContestHall_EventScript_Set5Hearts
+	goto_if_gt VAR_0x8004, 120, ContestHall_EventScript_Set4Hearts
+	goto_if_gt VAR_0x8004, 104, ContestHall_EventScript_Set3Hearts
+	goto_if_gt VAR_0x8004, 88, ContestHall_EventScript_Set2Hearts
+	goto_if_gt VAR_0x8004, 72, ContestHall_EventScript_Set1Heart
 	setvar VAR_TEMP_0, 0
 	return
 
 ContestHall_EventScript_GetNumberOfHeartsHyper::
-	goto_if_gt VAR_0x8004, 380, ContestHall_EventScript_Set8Hearts
-	goto_if_gt VAR_0x8004, 350, ContestHall_EventScript_Set7Hearts
-	goto_if_gt VAR_0x8004, 320, ContestHall_EventScript_Set6Hearts
-	goto_if_gt VAR_0x8004, 290, ContestHall_EventScript_Set5Hearts
-	goto_if_gt VAR_0x8004, 260, ContestHall_EventScript_Set4Hearts
-	goto_if_gt VAR_0x8004, 230, ContestHall_EventScript_Set3Hearts
-	goto_if_gt VAR_0x8004, 200, ContestHall_EventScript_Set2Hearts
-	goto_if_gt VAR_0x8004, 170, ContestHall_EventScript_Set1Heart
+	goto_if_gt VAR_0x8004, 304, ContestHall_EventScript_Set8Hearts
+	goto_if_gt VAR_0x8004, 280, ContestHall_EventScript_Set7Hearts
+	goto_if_gt VAR_0x8004, 256, ContestHall_EventScript_Set6Hearts
+	goto_if_gt VAR_0x8004, 232, ContestHall_EventScript_Set5Hearts
+	goto_if_gt VAR_0x8004, 208, ContestHall_EventScript_Set4Hearts
+	goto_if_gt VAR_0x8004, 184, ContestHall_EventScript_Set3Hearts
+	goto_if_gt VAR_0x8004, 160, ContestHall_EventScript_Set2Hearts
+	goto_if_gt VAR_0x8004, 136, ContestHall_EventScript_Set1Heart
 	setvar VAR_TEMP_0, 0
 	return
 
 ContestHall_EventScript_GetNumberOfHeartsMaster::
-	goto_if_gt VAR_0x8004, 600, ContestHall_EventScript_Set8Hearts
-	goto_if_gt VAR_0x8004, 560, ContestHall_EventScript_Set7Hearts
-	goto_if_gt VAR_0x8004, 520, ContestHall_EventScript_Set6Hearts
-	goto_if_gt VAR_0x8004, 480, ContestHall_EventScript_Set5Hearts
-	goto_if_gt VAR_0x8004, 440, ContestHall_EventScript_Set4Hearts
-	goto_if_gt VAR_0x8004, 400, ContestHall_EventScript_Set3Hearts
-	goto_if_gt VAR_0x8004, 360, ContestHall_EventScript_Set2Hearts
-	goto_if_gt VAR_0x8004, 320, ContestHall_EventScript_Set1Heart
+	goto_if_gt VAR_0x8004, 480, ContestHall_EventScript_Set8Hearts
+	goto_if_gt VAR_0x8004, 448, ContestHall_EventScript_Set7Hearts
+	goto_if_gt VAR_0x8004, 416, ContestHall_EventScript_Set6Hearts
+	goto_if_gt VAR_0x8004, 384, ContestHall_EventScript_Set5Hearts
+	goto_if_gt VAR_0x8004, 352, ContestHall_EventScript_Set4Hearts
+	goto_if_gt VAR_0x8004, 320, ContestHall_EventScript_Set3Hearts
+	goto_if_gt VAR_0x8004, 288, ContestHall_EventScript_Set2Hearts
+	goto_if_gt VAR_0x8004, 256, ContestHall_EventScript_Set1Heart
 	setvar VAR_TEMP_0, 0
 	return
 
 ContestHall_EventScript_GetNumberOfHeartsLink::
-	goto_if_gt VAR_0x8004, 600, ContestHall_EventScript_Set8Hearts
-	goto_if_gt VAR_0x8004, 550, ContestHall_EventScript_Set7Hearts
-	goto_if_gt VAR_0x8004, 500, ContestHall_EventScript_Set6Hearts
-	goto_if_gt VAR_0x8004, 450, ContestHall_EventScript_Set5Hearts
-	goto_if_gt VAR_0x8004, 400, ContestHall_EventScript_Set4Hearts
-	goto_if_gt VAR_0x8004, 300, ContestHall_EventScript_Set3Hearts
-	goto_if_gt VAR_0x8004, 200, ContestHall_EventScript_Set2Hearts
-	goto_if_gt VAR_0x8004, 100, ContestHall_EventScript_Set1Heart
+	goto_if_gt VAR_0x8004, 480, ContestHall_EventScript_Set8Hearts
+	goto_if_gt VAR_0x8004, 440, ContestHall_EventScript_Set7Hearts
+	goto_if_gt VAR_0x8004, 400, ContestHall_EventScript_Set6Hearts
+	goto_if_gt VAR_0x8004, 360, ContestHall_EventScript_Set5Hearts
+	goto_if_gt VAR_0x8004, 320, ContestHall_EventScript_Set4Hearts
+	goto_if_gt VAR_0x8004, 240, ContestHall_EventScript_Set3Hearts
+	goto_if_gt VAR_0x8004, 160, ContestHall_EventScript_Set2Hearts
+	goto_if_gt VAR_0x8004, 80, ContestHall_EventScript_Set1Heart
 	setvar VAR_TEMP_0, 0
 	return
 

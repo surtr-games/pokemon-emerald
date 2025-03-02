@@ -70,6 +70,7 @@ static bool8 TryStartWarpEventScript(struct MapPosition *, u16);
 static bool8 TryStartMiscWalkingScripts(u16);
 static bool8 TryStartStepCountScript(u16);
 static void UpdateFriendshipStepCounter(void);
+static void UpdateSheenStepCounter(void);
 static bool8 UpdatePoisonStepCounter(void);
 static void SetDirectionFromHeldKeys(u16 heldKeys);
 static u8 GetDirectionFromBitfield(u8 bitfield);
@@ -559,6 +560,7 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
 
     IncrementRematchStepCounter();
     UpdateFriendshipStepCounter();
+    UpdateSheenStepCounter();
     UpdateFarawayIslandStepCounter();
 
     if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED_MOVE) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
@@ -642,6 +644,36 @@ static void UpdateFriendshipStepCounter(void)
         {
             AdjustFriendship(mon, FRIENDSHIP_EVENT_WALKING);
             mon++;
+        }
+    }
+}
+
+#define SHEEN_STEP_CYCLE_LENGTH 128
+static void UpdateSheenStepCounter(void)
+{
+    u16 *stepCounter = GetVarPointer(VAR_SHEEN_STEP_COUNTER);
+    u8 sheen;
+    u32 i;
+
+    (*stepCounter)++;
+    (*stepCounter) %= SHEEN_STEP_CYCLE_LENGTH;
+    if ((*stepCounter) == 0)
+    {
+        for (i = 0; i < PARTY_SIZE; i++)
+        {
+            if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) != SPECIES_NONE &&
+                !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG) &&
+                gPlayerParty[i].hp > 0)
+            {
+                sheen = GetMonData(&gPlayerParty[i], MON_DATA_SHEEN);
+                if (sheen > 0)
+                {
+                    sheen--;
+                    SetMonData(&gPlayerParty[i], MON_DATA_SHEEN, &sheen);
+                }
+
+                return;
+            }
         }
     }
 }

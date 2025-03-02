@@ -3083,7 +3083,7 @@ static u16 CalculateContestantRound1Points(u8 who, u8 contestCategory)
         statSub2 = gContestMons[who].cool;
         break;
     }
-    return statMain + (statSub1 + statSub2 + gContestMons[who].sheen) / 2;
+    return statMain + (statSub1 + statSub2) / 2;
 }
 
 void CalculateRound1Points(u8 contestCategory)
