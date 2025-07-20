@@ -1320,7 +1320,7 @@ static void PlayerPartnerHandleDrawTrainerPic(void)
 
         gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
         gSprites[gBattlerSpriteIds[gActiveBattler]].x2 = DISPLAY_WIDTH;
-        gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = -2;
+        gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = -BATTLE_INTRO_SLIDE_SPEED;
         gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
     }
     else // otherwise use front sprite
@@ -1332,7 +1332,7 @@ static void PlayerPartnerHandleDrawTrainerPic(void)
         gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag);
         gSprites[gBattlerSpriteIds[gActiveBattler]].x2 = DISPLAY_WIDTH;
         gSprites[gBattlerSpriteIds[gActiveBattler]].y2 = 48;
-        gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = -2;
+        gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = -BATTLE_INTRO_SLIDE_SPEED;
         gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
         gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineMode = ST_OAM_AFFINE_OFF;
         gSprites[gBattlerSpriteIds[gActiveBattler]].hFlip = 1;
@@ -1781,7 +1781,7 @@ static void PlayerPartnerHandleIntroTrainerBallThrow(void)
 
     SetSpritePrimaryCoordsFromSecondaryCoords(&gSprites[gBattlerSpriteIds[gActiveBattler]]);
 
-    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 50;
+    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = B_INTRO_BALL_THROW_PLAYER_SIDE_FRAMES;
     gSprites[gBattlerSpriteIds[gActiveBattler]].data[2] = -40;
     gSprites[gBattlerSpriteIds[gActiveBattler]].data[4] = gSprites[gBattlerSpriteIds[gActiveBattler]].y;
     gSprites[gBattlerSpriteIds[gActiveBattler]].callback = StartAnimLinearTranslation;

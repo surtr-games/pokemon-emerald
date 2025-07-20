@@ -2936,7 +2936,7 @@ BattleScript_LocalBattleWonLoseTexts::
 BattleScript_LocalBattleWonReward::
 	getmoneyreward
 	printstring STRINGID_PLAYERGOTMONEY
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_VERY_SHORT
 BattleScript_PayDayMoneyAndPickUpItems::
 	givepaydaymoney
 	pickup
@@ -2951,17 +2951,17 @@ BattleScript_LocalBattleLost::
 BattleScript_LocalBattleLostPrintWhiteOut::
 	jumpifbattletype BATTLE_TYPE_TRAINER, BattleScript_LocalBattleLostEnd
 	printstring STRINGID_PLAYERWHITEOUT
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_VERY_SHORT
 	getmoneyreward
 	printstring STRINGID_PLAYERWHITEOUT2
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_VERY_SHORT
 	end2
 BattleScript_LocalBattleLostEnd::
 	printstring STRINGID_PLAYERLOSTTOENEMYTRAINER
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_VERY_SHORT
 	getmoneyreward
 	printstring STRINGID_PLAYERPAIDPRIZEMONEY
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_VERY_SHORT
 	end2
 BattleScript_CheckDomeDrew::
 	jumpifbyte CMP_EQUAL, gBattleOutcome, B_OUTCOME_DREW, BattleScript_LocalBattleLostEnd_
@@ -3058,22 +3058,22 @@ BattleScript_FrontierTrainerBattleWon_End:
 BattleScript_SmokeBallEscape::
 	playanimation BS_ATTACKER, B_ANIM_SMOKEBALL_ESCAPE
 	printstring STRINGID_PKMNFLEDUSINGITS
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_VERY_SHORT
 	end2
 
 BattleScript_RanAwayUsingMonAbility::
 	printstring STRINGID_PKMNFLEDUSING
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_VERY_SHORT
 	end2
 
 BattleScript_GotAwaySafely::
 	printstring STRINGID_GOTAWAYSAFELY
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_VERY_SHORT
 	end2
 
 BattleScript_WildMonFled::
 	printstring STRINGID_WILDPKMNFLED
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_MED
 	end2
 
 BattleScript_PrintCantRunFromTrainer::

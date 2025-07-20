@@ -10,6 +10,7 @@
 #include "task.h"
 #include "trig.h"
 #include "constants/trainers.h"
+#include "constants/battle_anim.h"
 
 static EWRAM_DATA u16 sBgCnt = 0;
 
@@ -178,7 +179,7 @@ static void BattleIntroSlide1(u8 taskId)
         }
         break;
     case 2:
-        gBattle_WIN0V -= 0xFF;
+        gBattle_WIN0V -= BATTLE_INTRO_REVEAL_SPEED;
         if ((gBattle_WIN0V & 0xFF00) == 0x3000)
         {
             gTasks[taskId].tState++;
@@ -207,10 +208,10 @@ static void BattleIntroSlide1(u8 taskId)
         }
 
         if (gBattle_WIN0V & 0xFF00)
-            gBattle_WIN0V -= 0x3FC;
+            gBattle_WIN0V -= BATTLE_INTRO_REVEAL_SPEED;
 
         if (gTasks[taskId].data[2])
-            gTasks[taskId].data[2] -= 2;
+            gTasks[taskId].data[2] -= BATTLE_INTRO_SLIDE_SPEED;
 
         // Scanline settings have already been set in CB2_InitBattleInternal()
         for (i = 0; i < DISPLAY_HEIGHT / 2; i++)
@@ -286,7 +287,7 @@ static void BattleIntroSlide2(u8 taskId)
         }
         break;
     case 2:
-        gBattle_WIN0V -= 0xFF;
+        gBattle_WIN0V -= BATTLE_INTRO_REVEAL_SPEED;
         if ((gBattle_WIN0V & 0xFF00) == 0x3000)
         {
             gTasks[taskId].tState++;
@@ -316,10 +317,10 @@ static void BattleIntroSlide2(u8 taskId)
         }
 
         if (gBattle_WIN0V & 0xFF00)
-            gBattle_WIN0V -= 0x3FC;
+            gBattle_WIN0V -= BATTLE_INTRO_REVEAL_SPEED;
 
         if (gTasks[taskId].data[2])
-            gTasks[taskId].data[2] -= 2;
+            gTasks[taskId].data[2] -= BATTLE_INTRO_SLIDE_SPEED;
 
         // Scanline settings have already been set in CB2_InitBattleInternal()
         for (i = 0; i < DISPLAY_HEIGHT / 2; i++)
@@ -379,7 +380,7 @@ static void BattleIntroSlide3(u8 taskId)
         }
         break;
     case 2:
-        gBattle_WIN0V -= 0xFF;
+        gBattle_WIN0V -= BATTLE_INTRO_REVEAL_SPEED;
         if ((gBattle_WIN0V & 0xFF00) == 0x3000)
         {
             gTasks[taskId].tState++;
@@ -404,10 +405,10 @@ static void BattleIntroSlide3(u8 taskId)
         }
 
         if (gBattle_WIN0V & 0xFF00)
-            gBattle_WIN0V -= 0x3FC;
+            gBattle_WIN0V -= BATTLE_INTRO_REVEAL_SPEED;
 
         if (gTasks[taskId].data[2])
-            gTasks[taskId].data[2] -= 2;
+            gTasks[taskId].data[2] -= BATTLE_INTRO_SLIDE_SPEED;
 
         // Scanline settings have already been set in CB2_InitBattleInternal()
         for (i = 0; i < DISPLAY_HEIGHT / 2; i++)
@@ -475,7 +476,7 @@ static void BattleIntroSlideLink(u8 taskId)
         }
         break;
     case 2:
-        gBattle_WIN0V -= 0xFF;
+        gBattle_WIN0V -= BATTLE_INTRO_REVEAL_SPEED;
         if ((gBattle_WIN0V & 0xFF00) == 0x3000)
         {
             gTasks[taskId].tState++;
@@ -486,10 +487,10 @@ static void BattleIntroSlideLink(u8 taskId)
         break;
     case 3:
         if (gBattle_WIN0V & 0xFF00)
-            gBattle_WIN0V -= 0x3FC;
+            gBattle_WIN0V -= BATTLE_INTRO_REVEAL_SPEED;
 
         if (gTasks[taskId].data[2])
-            gTasks[taskId].data[2] -= 2;
+            gTasks[taskId].data[2] -= BATTLE_INTRO_SLIDE_SPEED;
 
         // Scanline settings have already been set in CB2_InitBattleInternal()
         for (i = 0; i < DISPLAY_HEIGHT / 2; i++)
@@ -553,7 +554,7 @@ static void BattleIntroSlidePartner(u8 taskId)
             gBattle_WIN0V += 0x3FC;
 
         if (gTasks[taskId].data[2])
-            gTasks[taskId].data[2] -= 2;
+            gTasks[taskId].data[2] -= BATTLE_INTRO_SLIDE_SPEED;
 
         gBattle_BG1_X = gTasks[taskId].data[2];
         gBattle_BG2_X = -gTasks[taskId].data[2];

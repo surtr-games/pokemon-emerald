@@ -168,6 +168,12 @@ bool8 BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u8 startY, u8 targe
     {
         gPaletteFade.deltaY = 2;
 
+        if (selectedPalettes == PALETTES_ALL && delay == 0
+            && (startY == 0 || startY == 16) && (targetY == 0 || targetY == 16))
+        {
+            gPaletteFade.deltaY *= 2;
+        }
+
         if (delay < 0)
         {
             gPaletteFade.deltaY += (delay * -1);
@@ -549,7 +555,7 @@ void UnfadePlttBuffer(u32 selectedPalettes)
 
 void BeginFastPaletteFade(u8 submode)
 {
-    gPaletteFade.deltaY = 2;
+    gPaletteFade.deltaY = 4;
     BeginFastPaletteFadeInternal(submode);
 }
 
@@ -613,9 +619,9 @@ static u8 UpdateFastPaletteFade(void)
             b0 = unfaded->b;
 
             faded = (struct PlttData *)&gPlttBufferFaded[i];
-            r = faded->r - 2;
-            g = faded->g - 2;
-            b = faded->b - 2;
+            r = faded->r - gPaletteFade.deltaY;
+            g = faded->g - gPaletteFade.deltaY;
+            b = faded->b - gPaletteFade.deltaY;
 
             if (r < r0)
                 r = r0;
@@ -631,9 +637,9 @@ static u8 UpdateFastPaletteFade(void)
         for (i = paletteOffsetStart; i < paletteOffsetEnd; i++)
         {
             struct PlttData *data = (struct PlttData *)&gPlttBufferFaded[i];
-            r = data->r + 2;
-            g = data->g + 2;
-            b = data->b + 2;
+            r = data->r + gPaletteFade.deltaY;
+            g = data->g + gPaletteFade.deltaY;
+            b = data->b + gPaletteFade.deltaY;
 
             if (r > 31)
                 r = 31;
@@ -657,9 +663,9 @@ static u8 UpdateFastPaletteFade(void)
             b0 = unfaded->b;
 
             faded = (struct PlttData *)&gPlttBufferFaded[i];
-            r = faded->r + 2;
-            g = faded->g + 2;
-            b = faded->b + 2;
+            r = faded->r + gPaletteFade.deltaY;
+            g = faded->g + gPaletteFade.deltaY;
+            b = faded->b + gPaletteFade.deltaY;
 
             if (r > r0)
                 r = r0;
@@ -675,9 +681,9 @@ static u8 UpdateFastPaletteFade(void)
         for (i = paletteOffsetStart; i < paletteOffsetEnd; i++)
         {
             struct PlttData *data = (struct PlttData *)&gPlttBufferFaded[i];
-            r = data->r - 2;
-            g = data->g - 2;
-            b = data->b - 2;
+            r = data->r - gPaletteFade.deltaY;
+            g = data->g - gPaletteFade.deltaY;
+            b = data->b - gPaletteFade.deltaY;
 
             if (r < 0)
                 r = 0;

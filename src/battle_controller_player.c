@@ -1368,52 +1368,45 @@ static void Task_PrepareToGiveExpWithExpBar(u8 taskId)
 
 static void Task_GiveExpWithExpBar(u8 taskId)
 {
-    if (gTasks[taskId].tExpTask_frames < 13)
-    {
-        gTasks[taskId].tExpTask_frames++;
-    }
-    else
-    {
-        u8 monId = gTasks[taskId].tExpTask_monId;
-        s16 gainedExp = gTasks[taskId].tExpTask_gainedExp;
-        u8 battlerId = gTasks[taskId].tExpTask_battler;
-        s16 newExpPoints;
+    u8 monId = gTasks[taskId].tExpTask_monId;
+    s16 gainedExp = gTasks[taskId].tExpTask_gainedExp;
+    u8 battlerId = gTasks[taskId].tExpTask_battler;
+    s16 newExpPoints;
 
-        newExpPoints = MoveBattleBar(battlerId, gHealthboxSpriteIds[battlerId], EXP_BAR, 0);
-        SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
-        if (newExpPoints == -1) // The bar has been filled with given exp points.
+    newExpPoints = MoveBattleBar(battlerId, gHealthboxSpriteIds[battlerId], EXP_BAR, 0);
+    SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
+    if (newExpPoints == -1) // The bar has been filled with given exp points.
+    {
+        u8 level;
+        s32 currExp;
+        u16 species;
+        s32 expOnNextLvl;
+
+        m4aSongNumStop(SE_EXP);
+        level = GetMonData(&gPlayerParty[monId], MON_DATA_LEVEL);
+        currExp = GetMonData(&gPlayerParty[monId], MON_DATA_EXP);
+        species = GetMonData(&gPlayerParty[monId], MON_DATA_SPECIES);
+        expOnNextLvl = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1];
+
+        if (currExp + gainedExp >= expOnNextLvl)
         {
-            u8 level;
-            s32 currExp;
-            u16 species;
-            s32 expOnNextLvl;
+            u8 savedActiveBattler;
 
-            m4aSongNumStop(SE_EXP);
-            level = GetMonData(&gPlayerParty[monId], MON_DATA_LEVEL);
-            currExp = GetMonData(&gPlayerParty[monId], MON_DATA_EXP);
-            species = GetMonData(&gPlayerParty[monId], MON_DATA_SPECIES);
-            expOnNextLvl = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1];
-
-            if (currExp + gainedExp >= expOnNextLvl)
-            {
-                u8 savedActiveBattler;
-
-                SetMonData(&gPlayerParty[monId], MON_DATA_EXP, &expOnNextLvl);
-                CalculateMonStats(&gPlayerParty[monId]);
-                gainedExp -= expOnNextLvl - currExp;
-                savedActiveBattler = gActiveBattler;
-                gActiveBattler = battlerId;
-                BtlController_EmitTwoReturnValues(BUFFER_B, RET_VALUE_LEVELED_UP, gainedExp);
-                gActiveBattler = savedActiveBattler;
-                gTasks[taskId].func = Task_LaunchLvlUpAnim;
-            }
-            else
-            {
-                currExp += gainedExp;
-                SetMonData(&gPlayerParty[monId], MON_DATA_EXP, &currExp);
-                gBattlerControllerFuncs[battlerId] = CompleteOnInactiveTextPrinter;
-                DestroyTask(taskId);
-            }
+            SetMonData(&gPlayerParty[monId], MON_DATA_EXP, &expOnNextLvl);
+            CalculateMonStats(&gPlayerParty[monId]);
+            gainedExp -= expOnNextLvl - currExp;
+            savedActiveBattler = gActiveBattler;
+            gActiveBattler = battlerId;
+            BtlController_EmitTwoReturnValues(BUFFER_B, RET_VALUE_LEVELED_UP, gainedExp);
+            gActiveBattler = savedActiveBattler;
+            gTasks[taskId].func = Task_LaunchLvlUpAnim;
+        }
+        else
+        {
+            currExp += gainedExp;
+            SetMonData(&gPlayerParty[monId], MON_DATA_EXP, &currExp);
+            gBattlerControllerFuncs[battlerId] = CompleteOnInactiveTextPrinter;
+            DestroyTask(taskId);
         }
     }
 }
@@ -2479,7 +2472,7 @@ static void PlayerHandleDrawTrainerPic(void)
         gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag);
         gSprites[gBattlerSpriteIds[gActiveBattler]].x2 = DISPLAY_WIDTH;
         gSprites[gBattlerSpriteIds[gActiveBattler]].y2 = 48;
-        gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = -2;
+        gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = -BATTLE_INTRO_SLIDE_SPEED;
         gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
         gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineMode = ST_OAM_AFFINE_OFF;
         gSprites[gBattlerSpriteIds[gActiveBattler]].hFlip = 1;
@@ -2493,7 +2486,7 @@ static void PlayerHandleDrawTrainerPic(void)
 
         gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
         gSprites[gBattlerSpriteIds[gActiveBattler]].x2 = DISPLAY_WIDTH;
-        gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = -2;
+        gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = -BATTLE_INTRO_SLIDE_SPEED;
         gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
     }
 
@@ -2532,7 +2525,7 @@ static void PlayerHandleTrainerSlide(void)
 
     gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
     gSprites[gBattlerSpriteIds[gActiveBattler]].x2 = -96;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = 2;
+    gSprites[gBattlerSpriteIds[gActiveBattler]].sSpeedX = BATTLE_INTRO_SLIDE_SPEED;
     gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
 
     gBattlerControllerFuncs[gActiveBattler] = CompleteOnBankSpriteCallbackDummy2;
@@ -3102,7 +3095,7 @@ static void PlayerHandleIntroTrainerBallThrow(void)
 
     SetSpritePrimaryCoordsFromSecondaryCoords(&gSprites[gBattlerSpriteIds[gActiveBattler]]);
 
-    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 50;
+    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = B_INTRO_BALL_THROW_PLAYER_SIDE_FRAMES;
     gSprites[gBattlerSpriteIds[gActiveBattler]].data[2] = -40;
     gSprites[gBattlerSpriteIds[gActiveBattler]].data[4] = gSprites[gBattlerSpriteIds[gActiveBattler]].y;
     gSprites[gBattlerSpriteIds[gActiveBattler]].callback = StartAnimLinearTranslation;
