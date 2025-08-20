@@ -48,8 +48,9 @@
 #define FLAG_SYS_NO_TRAINER_SEE     0x22 // Unused Flag //DEBUG
 #define FLAG_SYS_NO_BAG_USE         0x23 // Unused Flag //DEBUG
 #define FLAG_SYS_NO_CATCHING        0x24 // Unused Flag //DEBUG
-#define FLAG_SYS_PC_FROM_DEBUG_MENU 0x25 // Unused Flag //DEBUG
-#define FLAG_SYS_NO_BATTLE_DMG      0x26 // Unused Flag //DEBUG
+#define FLAG_SYS_NO_BATTLE_DMG      0x25 // Unused Flag //DEBUG
+
+#define FLAG_UNUSED_0x026    0x26 // Unused Flag
 #define FLAG_UNUSED_0x027    0x27 // Unused Flag
 #define FLAG_UNUSED_0x028    0x28 // Unused Flag
 #define FLAG_UNUSED_0x029    0x29 // Unused Flag

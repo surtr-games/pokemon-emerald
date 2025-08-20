@@ -3,7 +3,7 @@
 
 #if TX_DEBUG_SYSTEM_ENABLE == TRUE
 void Debug_ShowMainMenu(void);
-void Debug_ReShowBattleDebugMenu(void);
+void Debug_OnEnemyPartyEditFinished(void);
 
 extern EWRAM_DATA bool8 gIsDebugBattle;
 extern EWRAM_DATA u32 gDebugAIFlags;

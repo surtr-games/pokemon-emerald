@@ -1661,24 +1661,10 @@ static void FieldTask_ReturnToPcMenu(void)
 
     SetVBlankCallback(NULL);
 
-#if TX_DEBUG_SYSTEM_ENABLE == TRUE
-    if (!FlagGet(FLAG_SYS_PC_FROM_DEBUG_MENU))
-    {
-#endif
-
-        taskId = CreateTask(Task_PCMainMenu, 80);
-        gTasks[taskId].tState = 0;
-        gTasks[taskId].tSelectedOption = sPreviousBoxOption;
-        Task_PCMainMenu(taskId);
-
-#if TX_DEBUG_SYSTEM_ENABLE == TRUE
-    }
-    else
-    {
-        FlagClear(FLAG_SYS_PC_FROM_DEBUG_MENU);
-        ScriptContext_Enable();
-    }
-#endif
+    taskId = CreateTask(Task_PCMainMenu, 80);
+    gTasks[taskId].tState = 0;
+    gTasks[taskId].tSelectedOption = sPreviousBoxOption;
+    Task_PCMainMenu(taskId);
 
     SetVBlankCallback(vblankCb);
     FadeInFromBlack();

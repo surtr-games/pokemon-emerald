@@ -27,26 +27,26 @@
 static void CB2_ReturnFromChooseHalfParty(void);
 static void CB2_ReturnFromChooseBattleFrontierParty(void);
 
-void HealPlayerParty(void)
+static void HealParty(struct Pokemon *party, u8 partyCount)
 {
     u8 i, j;
     u8 ppBonuses;
     u8 arg[4];
 
     // restore HP.
-    for(i = 0; i < gPlayerPartyCount; i++)
+    for(i = 0; i < partyCount; i++)
     {
-        u16 maxHP = GetMonData(&gPlayerParty[i], MON_DATA_MAX_HP);
+        u16 maxHP = GetMonData(&party[i], MON_DATA_MAX_HP);
         arg[0] = maxHP;
         arg[1] = maxHP >> 8;
-        SetMonData(&gPlayerParty[i], MON_DATA_HP, arg);
-        ppBonuses = GetMonData(&gPlayerParty[i], MON_DATA_PP_BONUSES);
+        SetMonData(&party[i], MON_DATA_HP, arg);
+        ppBonuses = GetMonData(&party[i], MON_DATA_PP_BONUSES);
 
         // restore PP.
         for(j = 0; j < MAX_MON_MOVES; j++)
         {
-            arg[0] = CalculatePPWithBonus(GetMonData(&gPlayerParty[i], MON_DATA_MOVE1 + j), ppBonuses, j);
-            SetMonData(&gPlayerParty[i], MON_DATA_PP1 + j, arg);
+            arg[0] = CalculatePPWithBonus(GetMonData(&party[i], MON_DATA_MOVE1 + j), ppBonuses, j);
+            SetMonData(&party[i], MON_DATA_PP1 + j, arg);
         }
 
         // since status is u32, the four 0 assignments here are probably for safety to prevent undefined data from reaching SetMonData.
@@ -54,8 +54,18 @@ void HealPlayerParty(void)
         arg[1] = 0;
         arg[2] = 0;
         arg[3] = 0;
-        SetMonData(&gPlayerParty[i], MON_DATA_STATUS, arg);
+        SetMonData(&party[i], MON_DATA_STATUS, arg);
     }
+}
+
+void HealPlayerParty(void)
+{
+    HealParty(gPlayerParty, gPlayerPartyCount);
+}
+
+void HealEnemyParty(void)
+{
+    HealParty(gEnemyParty, gEnemyPartyCount);
 }
 
 u8 ScriptGiveMon(u16 species, u8 level, u16 item, u32 unused1, u32 unused2, u8 unused3)

@@ -19,6 +19,7 @@ Things that are not implemented yet, or bugs that are caused by unimplemented fe
     * An actual cursor (instead of just highlighting the selected option)
 */
 #include "global.h"
+#include "debug_pokemon_creator.h"
 #include "battle_main.h"
 #include "data.h"
 #include "debug.h"
@@ -450,7 +451,7 @@ struct PokemonCreator
     struct Pokemon mon;
     struct Pokemon* monBeingEdited;
     u16 index;
-    u16 mode;
+    enum PkmCreatorMode mode;
     u32 data[EDIT_OPTION_COUNT];
     u8 currentPage;
     u8 selectedOption;
@@ -485,65 +486,49 @@ static const struct WindowTemplate DebugPkmCreator_FullScreenWindowTemplate =
 };
 
 
-/*
-    Mode List:
-    *  0 - Add to party
-    *  1 - Edit party
-    *  2 - Edit PC Box
-    *  3 - Edit enemy party (usable as a sandbox)
-    *  4 - Edit enemy party for debug battle
-    *  5 - Edit party for debug battle
-    *  6 - Add to enemy party (Unused)
-    *  7 - Testing mode (Don't alter parties)
-    *  8 - Testing mode (use first mon as template)
-    *  9 - For battle debug menu: Edit enemy party
-    * 10 - For battle debug menu: Edit enemy party as specified index
-*/
-void DebugPkmCreator_Init(u8 mode, u8 index)
+void DebugPkmCreator_Init(enum PkmCreatorMode mode, u8 index)
 {
     struct Pokemon* mons;
     u32 i;
     sDebugPkmCreatorData.mode = mode;
     switch (mode) {
-    case 0:
-    case 6:
-        mons = &gEnemyParty[0];
-        ZeroMonData(mons); // Is this really necessary?
+    case MODE_PARTY_ADD:
+    case MODE_ENEMY_PARTY_ADD:
         ZeroMonData(&sDebugPkmCreatorData.mon);
-        sDebugPkmCreatorData.monBeingEdited = mons;
+        sDebugPkmCreatorData.monBeingEdited = &sDebugPkmCreatorData.mon;
         sDebugPkmCreatorData.index = 0;
         break;
-    case 1:
-    case 5: // used in Debug Battle
+    case MODE_PARTY_EDIT:
+    case MODE_PARTY_EDIT_DRAFT:
         mons = &gPlayerParty[sDebugPkmCreatorData.index];
-        if (mode == 1) 
+        if (mode == MODE_PARTY_EDIT)
             CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct Pokemon));
         sDebugPkmCreatorData.monBeingEdited = mons;
         break;
-    case 2:
+    case MODE_PC_EDIT:
         mons = (struct Pokemon*) &gPokemonStoragePtr->boxes[0][sDebugPkmCreatorData.index];
         CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct BoxPokemon));
         CalculateMonStats(&sDebugPkmCreatorData.mon);
         sDebugPkmCreatorData.monBeingEdited = mons;
         break;
-    case 3:
-    case 4: // used in Debug Battle
+    case MODE_ENEMY_PARTY_EDIT:
+    case MODE_ENEMY_PARTY_EDIT_DRAFT:
         mons = &gEnemyParty[sDebugPkmCreatorData.index];
-        if (mode == 3)
+        if (mode == MODE_ENEMY_PARTY_EDIT)
             CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct Pokemon));
         sDebugPkmCreatorData.monBeingEdited = mons;
         break;
-    case 7:
-    case 8:
+    case MODE_TESTING:
+    case MODE_TESTING_COPY:
     default:
-        if (mode == 8)
+        if (mode == MODE_TESTING_COPY)
             CopyMon(&sDebugPkmCreatorData.mon, &gPlayerParty[0], sizeof(struct Pokemon));
         else
             ZeroMonData(&sDebugPkmCreatorData.mon);
         sDebugPkmCreatorData.monBeingEdited = &sDebugPkmCreatorData.mon;
         sDebugPkmCreatorData.index = 0;
         break;
-    case 9: // Add to enemy party
+    case MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT:
         for (i = 0; i < PARTY_SIZE; i++)
         {
             if (GetMonData(&gEnemyParty[i], MON_DATA_SANITY_HAS_SPECIES))
@@ -559,7 +544,7 @@ void DebugPkmCreator_Init(u8 mode, u8 index)
         sDebugPkmCreatorData.monBeingEdited = mons;
         sDebugPkmCreatorData.index = i;
         break;
-    case 10: // Edit enemy party at index
+    case MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT_INDEX:
         sDebugPkmCreatorData.index = index;
         mons = &gEnemyParty[sDebugPkmCreatorData.index];
         CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct Pokemon));
@@ -567,7 +552,10 @@ void DebugPkmCreator_Init(u8 mode, u8 index)
         break;
     }
     // Set default data
-    if (mode == 0 || mode == 6 || mode == 7 || mode == 9)
+    if (mode == MODE_PARTY_ADD ||
+        mode == MODE_ENEMY_PARTY_ADD ||
+        mode == MODE_TESTING ||
+        mode == MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT)
     {
         SetMonData(&sDebugPkmCreatorData.mon, MON_DATA_OT_NAME, Str_DefaultOTName);
         DebugPkmCreator_Init_SetDefaults();
@@ -579,7 +567,7 @@ void DebugPkmCreator_Init(u8 mode, u8 index)
     sDebugPkmCreatorData.headerWindowId = AddWindow(&DebugPkmCreator_HeaderWindowTemplate);
     DrawStdWindowFrame(sDebugPkmCreatorData.headerWindowId, FALSE);
     CopyWindowToVram(sDebugPkmCreatorData.headerWindowId, 3);
-    AddTextPrinterParameterized(sDebugPkmCreatorData.headerWindowId, 1, mode == 0 ? Str_Header_Create : Str_Header_Edit, 0, 0, 0, NULL);
+    AddTextPrinterParameterized(sDebugPkmCreatorData.headerWindowId, 1, mode == MODE_PARTY_ADD ? Str_Header_Create : Str_Header_Edit, 0, 0, 0, NULL);
     AddTextPrinterParameterized(sDebugPkmCreatorData.headerWindowId, 0, Str_Header2, 105, 0, 0, NULL);
     sDebugPkmCreatorData.menuWindowId = AddWindow(&DebugPkmCreator_FullScreenWindowTemplate);
     DrawStdWindowFrame(sDebugPkmCreatorData.menuWindowId, FALSE);
@@ -955,7 +943,13 @@ static void DebugPkmCreator_Redraw(void)
     ConvertIntToDecimalStringN(gStringVar1, sDebugPkmCreatorData.currentPage + 1, STR_CONV_MODE_LEFT_ALIGN, 2);
     StringExpandPlaceholders(gStringVar2, Str_Page);
     AddTextPrinterParameterized(sDebugPkmCreatorData.menuWindowId, 0, gStringVar2, x, y, 0, NULL);
-    if ((sDebugPkmCreatorData.mode >= 1 && sDebugPkmCreatorData.mode <= 5) || sDebugPkmCreatorData.mode == 10) {
+    if (sDebugPkmCreatorData.mode == MODE_PARTY_EDIT ||
+        sDebugPkmCreatorData.mode == MODE_PC_EDIT ||
+        sDebugPkmCreatorData.mode == MODE_ENEMY_PARTY_EDIT ||
+        sDebugPkmCreatorData.mode == MODE_ENEMY_PARTY_EDIT_DRAFT ||
+        sDebugPkmCreatorData.mode == MODE_PARTY_EDIT_DRAFT ||
+        sDebugPkmCreatorData.mode == MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT_INDEX)
+    {
         x = 100;
         ConvertIntToDecimalStringN(gStringVar1, sDebugPkmCreatorData.index + 1, STR_CONV_MODE_LEFT_ALIGN, 2);
         StringExpandPlaceholders(gStringVar2, Str_Slot);
@@ -1559,22 +1553,22 @@ static void DebugPkmCreator_ProcessInput(u8 taskid)
         sDebugPkmCreatorData.index--;
         switch (sDebugPkmCreatorData.mode)
         {
-        case 2:
+        case MODE_PC_EDIT:
             // We can technically select slot 404 of box 1 (actually box 13 slot 14) but it's still valid behavior provided the max index was set properly above.
             mons = (struct Pokemon*) &gPokemonStoragePtr->boxes[0][sDebugPkmCreatorData.index];
             sDebugPkmCreatorData.monBeingEdited = mons;
             CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct BoxPokemon));
             CalculateMonStats(&sDebugPkmCreatorData.mon);
             break;
-        case 1:
-        case 5:
+        case MODE_PARTY_EDIT:
+        case MODE_PARTY_EDIT_DRAFT:
             mons = &gPlayerParty[sDebugPkmCreatorData.index];
             sDebugPkmCreatorData.monBeingEdited = mons;
             CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct Pokemon));
             break;
-        case 3:
-        case 4:
-        case 10:
+        case MODE_ENEMY_PARTY_EDIT:
+        case MODE_ENEMY_PARTY_EDIT_DRAFT:
+        case MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT_INDEX:
             mons = &gEnemyParty[sDebugPkmCreatorData.index];
             sDebugPkmCreatorData.monBeingEdited = mons;
             CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct Pokemon));
@@ -1593,16 +1587,20 @@ static void DebugPkmCreator_ProcessInput(u8 taskid)
         u32 max_index;
         switch (sDebugPkmCreatorData.mode)
         {
-        case 0:
-        case 6 ... 8:
+        case MODE_PARTY_ADD:
+        case MODE_ENEMY_PARTY_ADD:
+        case MODE_TESTING:
+        case MODE_TESTING_COPY:
         default:
             return;
-        case 1:
-        case 3 ... 5:
-        case 10:
+        case MODE_PARTY_EDIT:
+        case MODE_ENEMY_PARTY_EDIT:
+        case MODE_ENEMY_PARTY_EDIT_DRAFT:
+        case MODE_PARTY_EDIT_DRAFT:
+        case MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT_INDEX:
             max_index = PARTY_SIZE;
             break;
-        case 2:
+        case MODE_PC_EDIT:
             max_index = TOTAL_BOXES_COUNT * IN_BOX_COUNT;
             break;
         }
@@ -1610,21 +1608,21 @@ static void DebugPkmCreator_ProcessInput(u8 taskid)
         sDebugPkmCreatorData.index++;
         switch (sDebugPkmCreatorData.mode)
         {
-        case 2:
+        case MODE_PC_EDIT:
             mons = (struct Pokemon*) &gPokemonStoragePtr->boxes[0][sDebugPkmCreatorData.index];
             sDebugPkmCreatorData.monBeingEdited = mons;
             CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct BoxPokemon));
             CalculateMonStats(&sDebugPkmCreatorData.mon);
             break;
-        case 1:
-        case 5:
+        case MODE_PARTY_EDIT:
+        case MODE_PARTY_EDIT_DRAFT:
             mons = &gPlayerParty[sDebugPkmCreatorData.index];
             sDebugPkmCreatorData.monBeingEdited = mons;
             CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct Pokemon));
             break;
-        case 3:
-        case 4:
-        case 10:
+        case MODE_ENEMY_PARTY_EDIT:
+        case MODE_ENEMY_PARTY_EDIT_DRAFT:
+        case MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT_INDEX:
             mons = &gEnemyParty[sDebugPkmCreatorData.index];
             sDebugPkmCreatorData.monBeingEdited = mons;
             CopyMon(&sDebugPkmCreatorData.mon, mons, sizeof(struct Pokemon));
@@ -1642,15 +1640,19 @@ static void DebugPkmCreator_ProcessInput(u8 taskid)
         RemoveWindow(sDebugPkmCreatorData.headerWindowId);
         ClearStdWindowAndFrame(sDebugPkmCreatorData.menuWindowId, TRUE);
         RemoveWindow(sDebugPkmCreatorData.menuWindowId);
-        DestroyTask(taskid);
         
-        if (sDebugPkmCreatorData.mode == 9 || sDebugPkmCreatorData.mode == 10)
-            Debug_ReShowBattleDebugMenu();
+        if (sDebugPkmCreatorData.mode == MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT ||
+            sDebugPkmCreatorData.mode == MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT_INDEX)
+        {
+            Debug_OnEnemyPartyEditFinished();
+        }
         else
         {
             ScriptContext_Enable();
             PlaySE(SE_SELECT);
         }
+
+        DestroyTask(taskid);
         return;
     }
     if (keys & SELECT_BUTTON) // TODO: Re-randomize the PID and IVs, or if OT is selected, toggle OT gender
@@ -1699,11 +1701,12 @@ static void DebugPkmCreator_ProcessInput(u8 taskid)
         RemoveWindow(sDebugPkmCreatorData.headerWindowId);
         ClearStdWindowAndFrame(sDebugPkmCreatorData.menuWindowId, TRUE);
         RemoveWindow(sDebugPkmCreatorData.menuWindowId);
-        DestroyTask(taskid);
-        if (sDebugPkmCreatorData.mode == 9 || sDebugPkmCreatorData.mode == 10)
-            Debug_ReShowBattleDebugMenu();
+        if (sDebugPkmCreatorData.mode == MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT ||
+            sDebugPkmCreatorData.mode == MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT_INDEX)
+            Debug_OnEnemyPartyEditFinished();
         else
             ScriptContext_Enable();
+        DestroyTask(taskid);
         return;
     }
 }
@@ -1811,6 +1814,8 @@ static void DebugPkmCreator_EditModeProcessInput(u8 taskid)
                     // preserve sanity bit
                     SetMonData(&sDebugPkmCreatorData.mon, MON_DATA_SANITY_HAS_SPECIES, &sDebugPkmCreatorData.data[11]);
                     DebugPkmCreator_PopulateDataStruct();
+                    // Clear the nickname
+                    FillWindowPixelRect(sDebugPkmCreatorData.menuWindowId, 0x11, 100, 80, POKEMON_NAME_LENGTH * 6, 16);
                     break;
                 case VAL_PID ... VAL_SID:
                     DebugPkmCreator_Init_SetNewMonData(FALSE);
@@ -2033,7 +2038,7 @@ static u8 DebugPkmCreator_GiveToPlayer(void)
     struct Pokemon* mon = &sDebugPkmCreatorData.mon;
     switch (sDebugPkmCreatorData.mode)
     {
-    case 0:
+    case MODE_PARTY_ADD:
         for (i = 0; i < PARTY_SIZE; i++)
         {
             if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) == 0)
@@ -2046,16 +2051,18 @@ static u8 DebugPkmCreator_GiveToPlayer(void)
         CopyMon(&gPlayerParty[i], mon, sizeof(*mon));
         gPlayerPartyCount = i + 1;
         return MON_GIVEN_TO_PARTY;
-    case 1:
-    case 3 ... 5:
-    case 10:
+    case MODE_PARTY_EDIT:
+    case MODE_ENEMY_PARTY_EDIT:
+    case MODE_ENEMY_PARTY_EDIT_DRAFT:
+    case MODE_PARTY_EDIT_DRAFT:
+    case MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT_INDEX:
         CopyMon(sDebugPkmCreatorData.monBeingEdited, mon, sizeof(struct Pokemon));
         return MON_GIVEN_TO_PARTY;
-    case 2:
+    case MODE_PC_EDIT:
         CopyMon(sDebugPkmCreatorData.monBeingEdited, mon, sizeof(struct BoxPokemon));
         return MON_GIVEN_TO_PC;
-    case 6:
-    case 9:
+    case MODE_ENEMY_PARTY_ADD:
+    case MODE_BATTLE_DEBUG_MENU_ENEMY_PARTY_EDIT:
         for (i = 0; i < PARTY_SIZE; i++)
         {
             if (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
@@ -2068,8 +2075,8 @@ static u8 DebugPkmCreator_GiveToPlayer(void)
         CopyMon(&gEnemyParty[i], mon, sizeof(*mon));
         gEnemyPartyCount = i + 1;
         return MON_GIVEN_TO_PARTY;
-    case 7:
-    case 8:
+    case MODE_TESTING:
+    case MODE_TESTING_COPY:
     default:
         return MON_CANT_GIVE;
     }
