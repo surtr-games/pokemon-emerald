@@ -437,6 +437,6 @@
 #define F_PAL_BATTLERS_2  (1 << 7 | 1 << 8 | 1 << 9 | 1 << 10)
 
 #define BATTLE_INTRO_REVEAL_SPEED 0x3FC // Default is 0xFF/0x3FC. Changing this might cause glitches with the battle intro reveal.
-#define BATTLE_INTRO_SLIDE_SPEED 8 // Default is 2. Must be a divisor of 96 and of 240 (display width). Should be less than 15 with the current reveal speed.
+#define BATTLE_INTRO_SLIDE_SPEED 6 // Default is 2. Must be a divisor of 96 and of 240 (display width). Should be less than 15 with the current reveal speed.
 
 #endif // GUARD_CONSTANTS_BATTLE_ANIM_H

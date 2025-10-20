@@ -3023,7 +3023,7 @@ extern const u8 gText_Summary[];
 extern const u8 gText_Rechoose[];
 extern const u8 gText_Deselect[];
 extern const u8 gText_Rent[];
-extern const u8 gText_Others2[];
+extern const u8 gText_Back[];
 extern const u8 gText_Yes2[];
 extern const u8 gText_Yes3[];
 extern const u8 gText_No2[];

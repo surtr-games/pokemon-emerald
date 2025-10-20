@@ -152,11 +152,14 @@ static void BattleIntroSlideEnd(u8 taskId)
     SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
 }
 
+#define kBgFinalY (u16)(-56)
+#define kLongGrassBgFinalY (u16)(-80)
 static void BattleIntroSlide1(u8 taskId)
 {
     int i;
+    bool8 isTerrainAnimDone = FALSE;
 
-    gBattle_BG1_X += 6;
+    gBattle_BG1_X += 8;
     switch (gTasks[taskId].tState)
     {
     case 0:
@@ -184,7 +187,7 @@ static void BattleIntroSlide1(u8 taskId)
         {
             gTasks[taskId].tState++;
             gTasks[taskId].data[2] = DISPLAY_WIDTH;
-            gTasks[taskId].data[3] = 32;
+            gTasks[taskId].data[3] = 1;
             gIntroSlideFlags &= ~1;
         }
         break;
@@ -197,13 +200,23 @@ static void BattleIntroSlide1(u8 taskId)
         {
             if (gTasks[taskId].tEnvironment == BATTLE_ENVIRONMENT_LONG_GRASS)
             {
-                if (gBattle_BG1_Y != (u16)(-80))
+                if (gBattle_BG1_Y != kLongGrassBgFinalY)
+                {
                     gBattle_BG1_Y -= 2;
+                }
+                isTerrainAnimDone = (gBattle_BG1_Y == kLongGrassBgFinalY);
             }
             else
             {
-                if (gBattle_BG1_Y != (u16)(-56))
+                if (gBattle_BG1_Y != kBgFinalY)
+                {
                     gBattle_BG1_Y -= 1;
+                    if (gTasks[taskId].tEnvironment == BATTLE_ENVIRONMENT_POND || gTasks[taskId].tEnvironment == BATTLE_ENVIRONMENT_MOUNTAIN)
+                    {
+                        gTasks[taskId].data[3]++;
+                    }
+                }
+                isTerrainAnimDone = (gBattle_BG1_Y == kBgFinalY);
             }
         }
 
@@ -220,7 +233,7 @@ static void BattleIntroSlide1(u8 taskId)
         for (; i < DISPLAY_HEIGHT; i++)
             gScanlineEffectRegBuffers[gScanlineEffect.srcBuffer][i] = -gTasks[taskId].data[2];
 
-        if (gTasks[taskId].data[2] == 0)
+        if (gTasks[taskId].data[2] == 0 && isTerrainAnimDone)
         {
             gScanlineEffect.state = 3;
             gTasks[taskId].tState++;
@@ -236,6 +249,8 @@ static void BattleIntroSlide1(u8 taskId)
         break;
     }
 }
+#undef kBgFinalY
+#undef kLongGrassBgFinalY
 
 static void BattleIntroSlide2(u8 taskId)
 {
@@ -245,10 +260,10 @@ static void BattleIntroSlide2(u8 taskId)
     {
     case BATTLE_ENVIRONMENT_SAND:
     case BATTLE_ENVIRONMENT_WATER:
-        gBattle_BG1_X += 8;
+        gBattle_BG1_X += 10;
         break;
     case BATTLE_ENVIRONMENT_UNDERWATER:
-        gBattle_BG1_X += 6;
+        gBattle_BG1_X += 8;
         break;
     }
 
@@ -256,12 +271,12 @@ static void BattleIntroSlide2(u8 taskId)
     {
         gBattle_BG1_Y = Cos2(gTasks[taskId].data[6]) / 512 - 8;
         if (gTasks[taskId].data[6] < 180)
-            gTasks[taskId].data[6] += 4;
-        else
             gTasks[taskId].data[6] += 6;
+        else
+            gTasks[taskId].data[6] += 8;
 
-        if (gTasks[taskId].data[6] == 360)
-            gTasks[taskId].data[6] = 0;
+        if (gTasks[taskId].data[6] >= 360)
+            gTasks[taskId].data[6] -= 360;
     }
 
     switch (gTasks[taskId].tState)
@@ -292,7 +307,7 @@ static void BattleIntroSlide2(u8 taskId)
         {
             gTasks[taskId].tState++;
             gTasks[taskId].data[2] = DISPLAY_WIDTH;
-            gTasks[taskId].data[3] = 32;
+            gTasks[taskId].data[3] = 20;
             gTasks[taskId].data[5] = 1;
             gIntroSlideFlags &= ~1;
         }
@@ -312,7 +327,7 @@ static void BattleIntroSlide2(u8 taskId)
             if ((gTasks[taskId].data[4] & 0x1F) && --gTasks[taskId].data[5] == 0)
             {
                 gTasks[taskId].data[4] += 0xFF;
-                gTasks[taskId].data[5] = 4;
+                gTasks[taskId].data[5] = 2;
             }
         }
 
@@ -329,7 +344,7 @@ static void BattleIntroSlide2(u8 taskId)
         for (; i < DISPLAY_HEIGHT; i++)
             gScanlineEffectRegBuffers[gScanlineEffect.srcBuffer][i] = -gTasks[taskId].data[2];
 
-        if (gTasks[taskId].data[2] == 0)
+        if (gTasks[taskId].data[2] == 0 && !(gTasks[taskId].data[4] & 0x1F))
         {
             gScanlineEffect.state = 3;
             gTasks[taskId].tState++;
@@ -385,7 +400,7 @@ static void BattleIntroSlide3(u8 taskId)
         {
             gTasks[taskId].tState++;
             gTasks[taskId].data[2] = DISPLAY_WIDTH;
-            gTasks[taskId].data[3] = 32;
+            gTasks[taskId].data[3] = 20;
             gTasks[taskId].data[5] = 1;
             gIntroSlideFlags &= ~1;
         }
@@ -400,7 +415,7 @@ static void BattleIntroSlide3(u8 taskId)
             if ((gTasks[taskId].data[4] & 0xF) && --gTasks[taskId].data[5] == 0)
             {
                 gTasks[taskId].data[4] += 0xFF;
-                gTasks[taskId].data[5] = 6;
+                gTasks[taskId].data[5] = 2;
             }
         }
 
@@ -417,7 +432,7 @@ static void BattleIntroSlide3(u8 taskId)
         for (; i < DISPLAY_HEIGHT; i++)
             gScanlineEffectRegBuffers[gScanlineEffect.srcBuffer][i] = -gTasks[taskId].data[2];
 
-        if (gTasks[taskId].data[2] == 0)
+        if (gTasks[taskId].data[2] == 0 && !(gTasks[taskId].data[4] & 0xF))
         {
             gScanlineEffect.state = 3;
             gTasks[taskId].tState++;
@@ -538,9 +553,10 @@ static void BattleIntroSlidePartner(u8 taskId)
         }
         break;
     case 2:
-        gBattle_WIN0V += 0x100;
-        if ((gBattle_WIN0V & 0xFF00) != 0x100)
-            gBattle_WIN0V--;
+        if (gBattle_WIN0V == 0x9F)
+            gBattle_WIN0V++;
+
+        gBattle_WIN0V += BATTLE_INTRO_REVEAL_SPEED;
 
         if ((gBattle_WIN0V & 0xFF00) == 0x2000)
         {
@@ -550,8 +566,8 @@ static void BattleIntroSlidePartner(u8 taskId)
         }
         break;
     case 3:
-        if ((gBattle_WIN0V & 0xFF00) != 0x4C00)
-            gBattle_WIN0V += 0x3FC;
+        if ((gBattle_WIN0V & 0xFF00) != 0x5000)
+            gBattle_WIN0V += BATTLE_INTRO_REVEAL_SPEED;
 
         if (gTasks[taskId].data[2])
             gTasks[taskId].data[2] -= BATTLE_INTRO_SLIDE_SPEED;
@@ -559,13 +575,13 @@ static void BattleIntroSlidePartner(u8 taskId)
         gBattle_BG1_X = gTasks[taskId].data[2];
         gBattle_BG2_X = -gTasks[taskId].data[2];
         if (gTasks[taskId].data[2] == 0)
+        {
             gTasks[taskId].tState++;
+        }
         break;
     case 4:
         gBattle_BG0_Y += 2;
         gBattle_BG2_Y += 2;
-        if ((gBattle_WIN0V & 0xFF00) != 0x5000)
-            gBattle_WIN0V += 0xFF;
 
         if (!gBattle_BG0_Y)
         {

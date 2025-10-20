@@ -1255,8 +1255,6 @@ void StartHealthboxSlideIn(u8 battler)
         healthboxSprite->y2 = -healthboxSprite->y2;
     }
     gSprites[healthboxSprite->data[5]].callback(&gSprites[healthboxSprite->data[5]]);
-    if (GetBattlerPosition(battler) == B_POSITION_PLAYER_RIGHT)
-        healthboxSprite->callback = SpriteCB_HealthboxSlideInDelayed;
 }
 
 static void SpriteCB_HealthboxSlideInDelayed(struct Sprite *sprite)
